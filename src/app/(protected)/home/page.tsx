@@ -23,10 +23,10 @@ import CommandButton from "@/components/command/command-button";
 import queryKey from "@/lib/queryKeys";
 import CalendarCard from "@/components/entries/calendar/calendar";
 
-
 const HomePage = () => {
   const clerk = useUser();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [openSummarizer, setSummarizer] = useState(false);
 
   const { isLoading, isError, data } = useQuery({
     queryKey: [queryKey.ALL_ENTRIES, selectedDate],
@@ -75,6 +75,7 @@ const HomePage = () => {
           initialDate={selectedDate}
           onChange={(newDate) => {
             setSelectedDate(newDate);
+            setSummarizer(false);
             console.log("New date selected:", newDate);
           }}
         />
@@ -82,14 +83,14 @@ const HomePage = () => {
 
         {data?.length > 0 && (
           <>
-            <SummarizerComponent />
+            <SummarizerComponent data={data} openState={openSummarizer} />
             <div className="pt-6"></div>
           </>
         )}
 
         {isLoading && <div>Loading...</div>}
         {isError && <div>Error</div>}
-        {data && console.log(data)}
+
         {!isLoading && !isError && data && data.length === 0 && (
           <div className="w-full h-[350px]">
             <EmptyFolder
@@ -105,7 +106,7 @@ const HomePage = () => {
                 case "note":
                   return <NoteCard key={entry.id} entry={entry} />;
                 case "calendar":
-                 return <CalendarCard key={entry.id} entry={entry} />;
+                  return <CalendarCard key={entry.id} entry={entry} />;
                 case "spotify":
                 // return <SpotifyCard key={entry.id} content={entry} />;
                 default:
@@ -114,7 +115,7 @@ const HomePage = () => {
             })}
         </div>
       </div>
-      <div className="pt-5" />
+      <div className="h-36" />
       <CommandButton />
     </>
   );

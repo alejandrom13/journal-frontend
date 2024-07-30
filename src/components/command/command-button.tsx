@@ -12,7 +12,7 @@ const CommandButton = () => {
   const buttons = [
     { icon: Pen, key: "editor" },
     { icon: AudioLinesIcon, key: "audio" },
-    { icon: Calendar, key: "calendar" },
+    // { icon: Calendar, key: "calendar" },
     { icon: Menu, key: "menu" },
   ];
 
@@ -21,11 +21,14 @@ const CommandButton = () => {
       switch (event.key) {
         case "n":
         case "N":
-          setActiveButton("editor");
+          setActiveButton('editor');
+
           break;
         case "a":
         case "A":
-          setActiveButton("audio");
+          activeButton !== null
+            ? setActiveButton(activeButton)
+            : setActiveButton("audio");
           break;
         case "Escape":
           setActiveButton(null);
@@ -47,9 +50,7 @@ const CommandButton = () => {
       <AnimatePresence>
         {activeButton === "editor" && <CreateNote key="editor" />}
         {activeButton === "audio" && <AudioRecorder />}
-        
       </AnimatePresence>
-      {/* Add other components for different button actions here */}
 
       <div className="flex flex-row justify-center items-center gap-3 ">
         {buttons.map(({ icon: Icon, key }) => (
