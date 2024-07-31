@@ -88,7 +88,7 @@ type DataItem = {
   id: string;
   type: string;
   content: Record<string, any>;
-  journalId?: string;
+  userId?: string;
   createdAt: string;
   updatedAt: string;
 };
