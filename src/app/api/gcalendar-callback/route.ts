@@ -3,8 +3,6 @@ import { google } from "googleapis";
 import { OAuth2Client } from "google-auth-library";
 import { createIntegration } from "@/actions/integrations";
 
-export const dynamic = "force-dynamic";
-
 export async function GET(req: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
