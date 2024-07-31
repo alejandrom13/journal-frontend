@@ -20,7 +20,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     const oauth2Client: OAuth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      "http://localhost:3001/api/gcalendar-callback"
+      process.env.MAIN_URL + "/api/gcalendar-callback"
     );
 
     const { tokens } = await oauth2Client.getToken(code);

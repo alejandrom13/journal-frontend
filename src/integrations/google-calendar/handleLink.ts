@@ -3,7 +3,7 @@ import { google } from "googleapis";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = "http://localhost:3001/api/gcalendar-callback";
+const REDIRECT_URI = process.env.MAIN_URL + "/api/gcalendar-callback";
 
 export const handleLinkCalendar = async () => {
   const oauth2Client = new google.auth.OAuth2(
