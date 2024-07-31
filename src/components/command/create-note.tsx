@@ -29,6 +29,7 @@ const CreateNote = () => {
         queryKey: [queryKey.ALL_ENTRIES],
       });
       simulateKeyPress("Escape");
+      //scroll to bottom
     },
     onError: (error: any) => {
       console.error("Error", error);

@@ -43,7 +43,7 @@ const MinimalTiptapEditor = forwardRef<HTMLDivElement, MinimalTiptapProps>(
     ref
   ) => {
     const editor = useEditor({
-      immediatelyRender: false,
+      immediatelyRender: true,
       extensions: [
         StarterKit,
         Image.extend({
@@ -114,10 +114,10 @@ const MinimalTiptapEditor = forwardRef<HTMLDivElement, MinimalTiptapProps>(
     });
 
     useEffect(() => {
-      if (editor) {
+      if (editor && !disabled) {
         editor.commands.focus();
       }
-    }, [editor]);
+    }, [disabled, editor]);
 
     return (
       <div

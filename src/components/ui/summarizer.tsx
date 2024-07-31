@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { WandSparkles, ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { marked } from "marked";
+import { motion } from "framer-motion";
 interface SummarizerProps {
   data: any;
   openState?: boolean;
@@ -31,26 +32,12 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
     htmlContent = marked(aiData);
   }
 
-  const songsListened = [
-    {
-      name: "Adele",
-    },
-    {
-      name: "Adele",
-    },
-    {
-      name: "Adele",
-    },
-    {
-      name: "Adele",
-    },
-    {
-      name: "Adele",
-    },
-  ];
-
   return (
-    <div className="w-full bg-white/40 p-4 rounded-3xl transition-all ease-in">
+    <div
+      className={`w-full bg-white/40 p-4 rounded-3xl transition-all ease-in
+  ${open ? "shadow-[0_0_10px_4px_rgba(51,121,227,0.5)]" : ""}
+  `}
+    >
       <div
         className="w-full bg-white/60 h-16 rounded-xl flex flex-row items-center p-4 cursor-pointer hover:bg-white transition-all"
         onClick={() => {
@@ -77,54 +64,20 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
         </div>
       </div>
 
-      <div
-        className={`transition-all duration-500 ease-in-out ${
-          open ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-        } overflow-hidden`}
+      <motion.div
+        initial={{ maxHeight: 0, opacity: 0 }}
+        animate={{ maxHeight: open ? "2000px" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: "easeInOut" }}
+        className="overflow-hidden"
       >
-        <div className="">
+        <div>
           {isPending && <div className="text-lg pt-4">Summarizing...</div>}
           <article
-            className="pb-4 pt-4 prose prose-strong:text-black prose-headings:text-black text-[18px] font-normal py-1 text-gray-900 prose-bold:text-white prose-bold:font-semibold prose-2xl:font-normal prose-2xl:text-lg prose-2xl:py-2 prose-2xl:leading-1.5"
+            className="p-4 pb-4 pt-4 prose prose-strong:text-black prose-headings:text-black text-[18px] font-normal py-1 text-gray-900 prose-bold:text-white prose-bold:font-semibold prose-2xl:font-normal prose-2xl:text-lg prose-2xl:py-2 prose-2xl:leading-1.5"
             dangerouslySetInnerHTML={{ __html: htmlContent! }}
           />
-          {/* 
-          <h4 className="text-lg pt-4">
-            You had <span className="font-semibold">2 Events</span>
-          </h4>
-          <div className="flex flex-row gap-4 pt-2">
-            <div className="w-48 p-3 rounded-lg bg-green-600 text-white">
-              <p>KickOff the week: AlterEstate</p>
-            </div>
-            <div className="w-48 p-3 rounded-lg bg-slate-400 text-white">
-              <p>Lunch</p>
-            </div>
-          </div>
         </div>
-
-        <div className="pt-4">
-          <h4 className="text-lg pt-4">
-            You listened to music for over{" "}
-            <span className="font-semibold">2 Hours</span>
-          </h4>
-          <div className="pt-2"></div>
-          <div className="w-full p-3 rounded-lg  text-black">
-            <div className="flex flex-row gap-4">
-              {songsListened.map((e: any) => {
-                return (
-                  <>
-                    <div className="h-16 w-16 bg-slate-500 rounded-md"></div>
-                  </>
-                );
-              })}
-            </div>
-          </div>
-          <h4 className="text-lg pt-4">
-            You spent most of your time at
-            <span className="font-semibold"> Home</span>
-          </h4> */}
-        </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
