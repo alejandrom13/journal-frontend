@@ -1,8 +1,9 @@
 "use server";
 import { cookies } from "next/headers";
 
+const apiUrl = process.env.API_URL;
+
 async function getAllEntries(date: Date) {
-  const apiUrl = process.env.API_URL;
   //format date to yyyy-mm-dd
   const formattedDate = date.toISOString().split("T")[0];
 
@@ -13,16 +14,18 @@ async function getAllEntries(date: Date) {
   });
 
   const data = await response.json();
-
+  console.log(data);
   return data;
 }
 
 const createEntry = async ({
   type,
   content,
+  createdAt,
 }: {
   type: string;
   content: any;
+  createdAt: string;
 }) => {
   const apiUrl = process.env.API_URL;
 
@@ -30,10 +33,9 @@ const createEntry = async ({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-
       Cookie: cookies().toString(),
     },
-    body: JSON.stringify({ type: type, content: content }),
+    body: JSON.stringify({ type: type, content: content, createdAt: createdAt }),
   });
   const data = await response.json();
   return data;

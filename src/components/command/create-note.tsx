@@ -8,16 +8,20 @@ import { OutputData } from "@editorjs/editorjs";
 import { simulateKeyPress } from "@/lib/utils";
 import queryKey from "@/lib/queryKeys";
 import Editor2 from "../editor/editor2";
-
+import { useDateStore } from "@/app/states/calendarState";
 const CreateNote = () => {
   // const [editorData, setEditorData] = useState<OutputData | undefined>() as any;
   const [editorValue, setEditorValue] = useState<string>();
-  const editorRef = React.useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
+  const { selectedDate, setSelectedDate } = useDateStore();
+
   const { isError, isPending, isSuccess, mutate } = useMutation({
-    mutationFn: (variables: { type: string; content: any }) =>
-      createEntry(variables),
+    mutationFn: (variables: {
+      type: string;
+      content: any;
+      createdAt: string;
+    }) => createEntry(variables),
     onSuccess: () => {
       // Clear the form or show a success message here
       setEditorValue(undefined);
@@ -35,7 +39,11 @@ const CreateNote = () => {
   const handleSubmission = () => {
     if (editorValue) {
       const jsonRes = JSON.parse(editorValue);
-      mutate({ type: "note", content: jsonRes });
+      mutate({
+        type: "note",
+        content: jsonRes,
+        createdAt: selectedDate.toISOString(),
+      });
     } else {
       console.warn("No content to submit");
       // Show a warning to the user here

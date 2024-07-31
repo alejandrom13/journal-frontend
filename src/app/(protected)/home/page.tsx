@@ -19,12 +19,9 @@ import CommandButton from "@/components/command/command-button";
 import queryKey from "@/lib/queryKeys";
 import CalendarCard from "@/components/entries/calendar/calendar";
 import { DayPicker } from "react-day-picker";
-
+import { useDateStore } from "@/app/states/calendarState";
 const HomePage = () => {
-  const [selectedDate, setSelectedDate] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  });
+  const { selectedDate, setSelectedDate } = useDateStore();
 
   const [openSummarizer, setSummarizer] = useState(false);
 
