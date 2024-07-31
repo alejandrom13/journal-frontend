@@ -7,9 +7,9 @@ const queryClient = new QueryClient();
 
 const HomeTemplate = ({ children }: any) => {
   return (
-    <ThemeProvider>
+    <>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </ThemeProvider>
+    </>
   );
 };
 
