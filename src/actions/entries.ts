@@ -12,10 +12,8 @@ async function getAllEntries(date: Date) {
     },
   });
 
-
   const data = await response.json();
 
-  console.log("data", data);
   return data;
 }
 
@@ -27,8 +25,6 @@ const createEntry = async ({
   content: any;
 }) => {
   const apiUrl = process.env.API_URL;
-
-  console.log("Creating entry", type, content);
 
   const response = await fetch(apiUrl + "/entry", {
     method: "POST",

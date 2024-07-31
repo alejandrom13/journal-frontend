@@ -7,20 +7,20 @@ import Editor from "../editor/editor";
 import { OutputData } from "@editorjs/editorjs";
 import { simulateKeyPress } from "@/lib/utils";
 import queryKey from "@/lib/queryKeys";
+import Editor2 from "../editor/editor2";
 
 const CreateNote = () => {
-  const [editorData, setEditorData] = useState<OutputData | undefined>() as any;
-
+  // const [editorData, setEditorData] = useState<OutputData | undefined>() as any;
+  const [editorValue, setEditorValue] = useState<string>();
   const editorRef = React.useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
   const { isError, isPending, isSuccess, mutate } = useMutation({
-    mutationFn: (variables: { type: string; content: OutputData }) =>
+    mutationFn: (variables: { type: string; content: any }) =>
       createEntry(variables),
     onSuccess: () => {
-      console.log("Success");
       // Clear the form or show a success message here
-      setEditorData(undefined);
+      setEditorValue(undefined);
       queryClient.invalidateQueries({
         queryKey: [queryKey.ALL_ENTRIES],
       });
@@ -33,8 +33,9 @@ const CreateNote = () => {
   });
 
   const handleSubmission = () => {
-    if (editorData) {
-      mutate({ type: "note", content: editorData });
+    if (editorValue) {
+      const jsonRes = JSON.parse(editorValue);
+      mutate({ type: "note", content: jsonRes });
     } else {
       console.warn("No content to submit");
       // Show a warning to the user here
@@ -65,17 +66,15 @@ const CreateNote = () => {
       >
         <div className="overflow-y-scroll overflow-x-hidden">
           {/* <Editor
-            initialValue={value}
-            onChange={(value) => {
-              setValue(value);
-              console.log(value);
-            }}
-          /> */}
-
-          <Editor
             data={editorData}
             onChange={setEditorData}
             editorRef={editorRef}
+          /> */}
+          <Editor2
+            value={editorValue}
+            onChange={(val: string) => {
+              setEditorValue(val);
+            }}
           />
         </div>
 

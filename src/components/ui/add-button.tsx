@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AudioLinesIcon, Pen, Plus } from "lucide-react";
 import { buttonVariants, Button } from "./button";
 import { useState } from "react";
-import { useNote } from "../entries/note/useNote";
 
 const AddButton = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,11 +37,8 @@ const AddButton = () => {
     exit: { opacity: 0 },
   };
 
-  const { isOpen, openDrawer, closeDrawer, toggleDrawer, NoteComponent } =
-    useNote();
   return (
     <>
-      <NoteComponent />
       <div className="fixed bottom-0 left-[60%] transform -translate-x-1/2 mb-10">
         <div className="relative">
           <AnimatePresence>
@@ -58,16 +54,12 @@ const AddButton = () => {
                   {
                     icon: <AudioLinesIcon size={20} />,
                     name: "Voice Note",
-                    onClick: () => {
-                      console.log("Voice Note");
-                    },
+                    onClick: () => {},
                   },
                   {
                     icon: <Pen size={20} />,
                     name: "Note",
-                    onClick: () => {
-                      openDrawer();
-                    },
+                    onClick: () => {},
                   },
                 ].map((item, index) => (
                   <motion.div

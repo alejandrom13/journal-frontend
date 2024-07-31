@@ -8,7 +8,7 @@ interface SummarizerProps {
   openState?: boolean;
 }
 
-const SummarizerComponent = ({ data, openState  }: SummarizerProps) => {
+const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
   const [open, setOpen] = useState(openState);
 
   useEffect(() => {
@@ -29,7 +29,6 @@ const SummarizerComponent = ({ data, openState  }: SummarizerProps) => {
 
   if (isSuccess) {
     htmlContent = marked(aiData);
-    console.log(aiData);
   }
 
   const songsListened = [

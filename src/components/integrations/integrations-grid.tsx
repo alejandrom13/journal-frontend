@@ -30,6 +30,9 @@ const IntegrationsGrid = () => {
       button: (
         <CalendarIntegrationButton
           isLinked={isGoogleCalendarLinked(data!)}
+          integration={data.find(
+            (integration: any) => integration.type === "google-calendar"
+          )}
         />
       ),
     },

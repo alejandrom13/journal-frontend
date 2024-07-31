@@ -14,9 +14,7 @@ async function createIntegration(type: string, metadata: any) {
     body: JSON.stringify({ type: type, metadata: metadata }),
   });
 
-  console.log(response);
   const data = await response.json();
-  console.log("data", data);
 
   return data;
 }
@@ -29,9 +27,21 @@ async function getAllIntegrations() {
   });
 
   const data = await response.json();
-  console.log("data", data);
 
   return data;
 }
 
-export { createIntegration, getAllIntegrations };
+async function deleteIntegration(id: string) {
+  const response = await fetch(apiUrl + "/integrations/" + id, {
+    method: "DELETE",
+    headers: {
+      Cookie: cookies().toString(),
+    },
+  });
+
+  const data = await response.json();
+
+  return data;
+}
+
+export { createIntegration, getAllIntegrations, deleteIntegration };

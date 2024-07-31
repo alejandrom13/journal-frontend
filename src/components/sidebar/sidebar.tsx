@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -48,6 +48,18 @@ const Sidebar = () => {
   const clerk = useUser();
   const { openUserProfile } = useClerk();
 
+  const userButtonRef = useRef<HTMLDivElement>(null);
+
+  const handleParentButtonClick = () => {
+    // Find the button element inside the UserButton and click it
+    if (userButtonRef.current) {
+      const userButton = userButtonRef.current.querySelector("button");
+      if (userButton) {
+        userButton.click();
+      }
+    }
+  };
+
   return (
     <div className="py-6 pl-6">
       <aside className="inset-y w-80 rounded-3xl left-0 z-20 flex h-full flex-col  bg-background/50 shadow-[0_4px_22px_0_rgba(0,0,0,0.1)] ">
@@ -86,13 +98,17 @@ const Sidebar = () => {
           <SignedIn>
             <Button
               variant="ghost"
-              className={`rounded-2xl bg-white/50 text-slate-800 h-16 justify-start gap-3 text-md`}
+              className={`rounded-2xl bg-white/50 text-slate-800 h-16 justify-start gap-3 text-md select-none`}
               aria-label="Playground"
-              onClick={() => {
-                openUserProfile();
-              }}
+              onClick={handleParentButtonClick}
+
+              // onClick={() => {
+              //   openUserProfile();
+              // }}
             >
-              <UserButton />
+              <div ref={userButtonRef} className="h-full items-center flex">
+                <UserButton signInUrl="/" />
+              </div>
               {clerk?.user?.firstName} {clerk?.user?.lastName?.at(0) + "."}
               {/* <LucideCircleDot height={18} className="ml-auto" /> */}
             </Button>

@@ -22,9 +22,7 @@ const ThemeSwitcher: React.FC = () => {
   return (
     <Select
       value={theme}
-      className="w-32 text-black"
       onValueChange={(value:any) => changeTheme(value)}
-      options={themes}
     />
   );
 };

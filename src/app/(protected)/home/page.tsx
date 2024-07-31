@@ -1,7 +1,5 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
-import AddButton from "@/components/ui/add-button";
+import { useEffect, useState } from "react";
 import SummarizerComponent from "@/components/ui/summarizer";
 import { useQuery } from "@tanstack/react-query";
 import { getAllEntries } from "@/actions/entries";
@@ -13,37 +11,35 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns-tz";
-import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import CommandButton from "@/components/command/command-button";
 import queryKey from "@/lib/queryKeys";
 import CalendarCard from "@/components/entries/calendar/calendar";
+import { DayPicker } from "react-day-picker";
 
 const HomePage = () => {
-  const clerk = useUser();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  });
+
   const [openSummarizer, setSummarizer] = useState(false);
 
-  const { isLoading, isError, data } = useQuery({
+  const { isLoading, isError, data, isSuccess } = useQuery({
     queryKey: [queryKey.ALL_ENTRIES, selectedDate],
     queryFn: () => getAllEntries(selectedDate),
     enabled: !!selectedDate,
   });
 
-  const handleSelectDay = (date: Date) => {
-    console.log("Selected date:", date);
-  };
+  const handleSelectDay = (date: Date) => {};
 
   const [popoverOpen, setPopoverOpen] = useState(false);
   return (
     <>
-      <div className="container ">
-        {/* <AddButton /> */}
-
+      <div className="">
         <Popover open={popoverOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -76,7 +72,6 @@ const HomePage = () => {
           onChange={(newDate) => {
             setSelectedDate(newDate);
             setSummarizer(false);
-            console.log("New date selected:", newDate);
           }}
         />
         <div className="pt-6"></div>
@@ -91,7 +86,7 @@ const HomePage = () => {
         {isLoading && <div>Loading...</div>}
         {isError && <div>Error</div>}
 
-        {!isLoading && !isError && data && data.length === 0 && (
+        {!isLoading && !isError && isSuccess && data.length === 0 && (
           <div className="w-full h-[350px]">
             <EmptyFolder
               title="No entries found"
@@ -101,12 +96,16 @@ const HomePage = () => {
         )}
         <div className="flex flex-col gap-4">
           {data &&
-            data?.map((entry: any) => {
+            data?.map((entry: any, index: any) => {
               switch (entry.type) {
                 case "note":
-                  return <NoteCard key={entry.id} entry={entry} />;
+                  return (
+                    <NoteCard key={entry.id} entry={entry} index={index} />
+                  );
                 case "calendar":
-                  return <CalendarCard key={entry.id} entry={entry} />;
+                  return (
+                    <CalendarCard key={entry.id} entry={entry} index={index} />
+                  );
                 case "spotify":
                 // return <SpotifyCard key={entry.id} content={entry} />;
                 default:
@@ -122,64 +121,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-/*
-Category 1: Impact
-
-Is the solution easy and enjoyable to use for everyone, including people with disabilities? (maximum 5 points)
-5
-
-Does this solution have potential to contribute meaningfully to environmental sustainability?(maximum 5 points)
-0
-
-Does this solution have potential to contribute meaningfully to improving people's lives? (maximum 5 points)
-3
-
-
-
-Category 2: Remarkability
-
-Is the submission surprising to those that are well-versed in Large Language Models (“LLM”)? (maximum 5 points)
-2
-
-Is the submission surprising to those that are not well-versed in LLM? (maximum 5 points)
-4
-
-
-
-Category 3: Creativity
-
-Does the submission differ from existing, well known, applications in functionality? (maximum 5 points)
-3
-
-Does the submission differ from existing, well known, applications in user experience? (maximum 5 points)
-4
-
-Is the submission implemented through the use of creative problem-solving approaches? (maximum 5 points)
-4
-
-
-
-Category 4: Usefulness
-
-Does the submission include a well-defined target user persona/segmentation? (maximum 5 points)
-4
-
-Does the submission identify how the solution addresses specific user needs? (maximum 5 points)
-4
-
-How well does the solution, as implemented, help users meet these needs? (maximum 5 points)
-2
-
-
-
-Category 5: Execution
-
-Is the solution well-designed and adhere to software engineering practices? (maximum 5 points)
-5
-
-Is the LLM component of the solution well-designed and adhere to Machine Learning (ML)/LLM best practices? (maximum 5 points)
-3
-
-
-*/

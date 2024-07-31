@@ -13,7 +13,6 @@ const generateSummary = async (data: any) => {
     prompt: "(Use markdown, and well structured text with bold) Summarize me what i did this day: \n" + data,
   });
 
-  console.log(text);
 
   return text;
 };

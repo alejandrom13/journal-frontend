@@ -4,7 +4,9 @@ const AuthLayout = () => {
   return (
     <div>
       <SignedOut>
-        <SignInButton></SignInButton>
+        <SignInButton 
+        fallbackRedirectUrl={"/home"}
+        ></SignInButton>
       </SignedOut>
 
       <SignedIn>

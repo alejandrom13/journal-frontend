@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import Editor from "@/components/editor/editor";
 import { OutputData } from "@editorjs/editorjs";
+import { motion } from "framer-motion";
 
-const CalendarCard = ({ entry }: any) => {
+const CalendarCard = ({ entry, index }: any) => {
   const [event, setEvent] = useState<any>();
 
   useEffect(() => {
@@ -13,11 +14,15 @@ const CalendarCard = ({ entry }: any) => {
     }
   }, [entry]);
 
-  console.log(event);
 
   return (
-    <div className="w-full bg-white/40 p-4 rounded-3xl transition-all ease-in ">
-      <div className="flex flex-row items-center">
+    <motion.div
+      className="w-full bg-white/40 p-4 rounded-3xl transition-all ease-in "
+      initial={{ opacity: 0 }}
+      animate={{  opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'linear', delay: index*0.05 }}
+    >      <div className="flex flex-row items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -51,7 +56,7 @@ const CalendarCard = ({ entry }: any) => {
       {/* <span className="text-sm text-black/40">
         {moment(entry?.created_at).format("MMMM DD YYYY, h:mm a")}
       </span> */}
-    </div>
+    </motion.div>
   );
 };
 

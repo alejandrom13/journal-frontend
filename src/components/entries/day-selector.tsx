@@ -77,7 +77,7 @@ const MonthCarousel: React.FC<MonthCarouselProps> = ({
   return (
     <div className="relative p-4">
 
-      <div className="overflow-hidden relative" ref={viewportRef}>
+      <div className="overflow-hidden relative select-none" ref={viewportRef}>
         <div className="embla__container flex">
           {days.map((day) => (
             <div key={day} className="embla__slide flex-shrink-0 mx-2">
