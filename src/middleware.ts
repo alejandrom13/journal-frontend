@@ -1,6 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isPublicRoute = createRouteMatcher(["/auth(.*)", "/"]);
+const isPublicRoute = createRouteMatcher([
+  "/auth(.*)",
+  "/",
+  "/api(.*)", // This will match all routes under /api/uploadthing
+]);
 
 export default clerkMiddleware(
   (auth, request) => {
@@ -10,7 +14,7 @@ export default clerkMiddleware(
   },
   {
     afterSignInUrl: "/home",
-    afterSignUpUrl: "/home",
+    afterSignUpUrl: "/onboarding",
   }
 );
 

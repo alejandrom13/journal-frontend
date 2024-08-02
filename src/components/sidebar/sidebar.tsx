@@ -19,6 +19,9 @@ import {
   ImageIcon,
   LifeBuoy,
   LucideCircleDot,
+  LucideLightbulb,
+  LucideMessageCircle,
+  LucideNotebook,
   Pen,
   Plus,
   Settings2,
@@ -61,22 +64,22 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="py-6 pl-6">
+    <div className="hidden sm:block py-6 pl-6">
       <aside className="inset-y w-80 rounded-3xl left-0 z-20 flex h-full flex-col  bg-background/50 shadow-[0_4px_22px_0_rgba(0,0,0,0.1)] ">
         <nav className="grid gap-1 p-2 w-full">
           <SidebarItem
             href="/home"
-            icon={<HomeIcon size={20} />}
-            label="Home"
+            icon={<LucideNotebook size={20} />}
+            label="Journal"
           />
           <SidebarItem
             href="/blocks"
-            icon={<SquareMenu size={20} />}
-            label="All Blocks"
+            icon={<LucideLightbulb size={20} />}
+            label="Insights"
           />
           <SidebarItem
             href="/chat"
-            icon={<BotMessageSquare size={20} />}
+            icon={<LucideMessageCircle size={20} />}
             label="Chat"
           />
           <SidebarItem

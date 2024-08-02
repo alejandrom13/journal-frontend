@@ -20,6 +20,7 @@ const Editor2: React.FC<EditorProps> = ({ value, onChange }) => {
       outputValue="json"
       disabled={false}
       contentClass=""
+      disableToolbar 
     />
   );
 };

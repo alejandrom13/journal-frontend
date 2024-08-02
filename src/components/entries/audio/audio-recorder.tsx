@@ -1,14 +1,28 @@
+"use client";
 import React, { useRef, useState, useEffect } from "react";
 import WaveSurfer from "@wavesurfer/react";
-import { useWavesurfer } from "@wavesurfer/react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { container } from "googleapis/build/src/apis/container";
-import { Mic, Pause, Play, Save, StopCircle, Trash, UploadCloudIcon } from "lucide-react";
+
+import {
+  Mic,
+  Pause,
+  Play,
+  Save,
+  StopCircle,
+  Trash,
+  UploadCloudIcon,
+} from "lucide-react";
+import { saveRecording } from "@/actions/saveRecording";
+import { useDateStore } from "@/app/states/calendarState";
+import { useUser } from "@clerk/nextjs";
+import { useQueryClient } from "@tanstack/react-query";
+import queryKey from "@/lib/queryKeys";
+import { simulateKeyPress } from "@/lib/utils";
 
 const AudioRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioBlob, setAudioBlob] = useState<File | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -16,6 +30,13 @@ const AudioRecorder: React.FC = () => {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { user } = useUser();
+
+  const { selectedDate, setSelectedDate } = useDateStore();
+  const queryClient = useQueryClient();
+
+
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
     return () => {
@@ -49,9 +70,13 @@ const AudioRecorder: React.FC = () => {
       );
 
       mediaRecorderRef.current.addEventListener("stop", () => {
-        const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-        const url = URL.createObjectURL(audioBlob);
-        setAudioBlob(audioBlob);
+        // Create a File object from the audio chunks
+        const audioFile = new File(audioChunks, "recording.wav", {
+          type: "audio/wav",
+        });
+        const url = URL.createObjectURL(audioFile);
+
+        setAudioBlob(audioFile); // If you still want to call it audioBlob, you can rename the state accordingly
         setAudioUrl(url);
 
         stream.getTracks().forEach((track) => track.stop());
@@ -94,15 +119,13 @@ const AudioRecorder: React.FC = () => {
       console.error("Error stopping the recording:", err);
     }
   };
-
-  const saveRecording = async () => {
-    // ... (same as before)
-  };
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [downloadURL, setDownloadURL] = useState<string | null>(null);
 
   const deleteRecording = () => {
     setAudioBlob(null);
     setAudioUrl(null);
-  }
+  };
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -125,13 +148,15 @@ const AudioRecorder: React.FC = () => {
       layout
     >
       <motion.div
-        className="flex flex-col bg-white/50 rounded-[35px] h-[170px] p-4 shadow-lg z-30"
+        className="relative overflow-visible flex flex-col bg-white/50 rounded-[35px] h-[170px] p-4 shadow-lg z-30"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.1, ease: "easeInOut" }}
         layout
       >
+  
+
         {!isRecording && !audioUrl && (
           <Button
             className="rounded-3xl h-full text-xl"
@@ -144,18 +169,7 @@ const AudioRecorder: React.FC = () => {
         )}
         {isRecording && (
           <div className="flex flex-col w-full h-full">
-            {/* <WaveSurfer
-              onReady={(waveSurfer) =>
-                (waveSurferInstanceRef.current = waveSurfer)
-              }
-              height={50}
-              waveColor="rgb(200, 0, 200)"
-              progressColor="rgb(100, 0, 100)"
-              cursorWidth={0}
-              barGap={2}
-              barWidth={2}
-              barRadius={30}
-            /> */}
+
             <Button
               className="rounded-3xl bg-red-500 hover:bg-red-600 h-full text-xl"
               size={"lg"}
@@ -190,22 +204,45 @@ const AudioRecorder: React.FC = () => {
                   setIsPlaying(!isPlaying);
                 }}
               >
-                {
-                  isPlaying ? (
-                    <Pause size={30} className="mr-2" />
-                  ) : (
-                    <Play size={30} className="mr-2" />
-                  )
-                }
-              </Button>
-              <Button className="rounded-3xl h-[60px] w-full text-xl" size={'lg'}  onClick={saveRecording}>
-               <UploadCloudIcon size={30} className="mr-2" />
-                Save Recording
+                {isPlaying ? (
+                  <Pause size={30} className="mr-2" />
+                ) : (
+                  <Play size={30} className="mr-2" />
+                )}
               </Button>
 
-              <Button className="rounded-3xl h-[60px]  w-full text-xl bg-red-500 hover:bg-red-600" size={'lg'}  onClick={deleteRecording}>
-               <Trash size={30} className="mr-2" />
-                
+              <Button
+                className="rounded-3xl h-[60px] w-full text-xl"
+                size={"lg"}
+                onClick={async () => {
+                  setIsUploading(true);
+                  const formData = new FormData();
+                  formData.append("file", audioBlob!);
+                  formData.append("type", "audio");
+                  formData.append("userId", user?.id!);
+
+                  console.log(formData);
+
+                  await saveRecording(formData, selectedDate).then(() => {
+                    setIsUploading(false);
+                    queryClient.invalidateQueries({
+                      queryKey: [queryKey.ALL_ENTRIES],
+                    });
+                    simulateKeyPress("Escape");
+                  });
+                }}
+                disabled={isUploading}
+              >
+                <UploadCloudIcon size={30} className="mr-2" />
+                {isUploading ? "Uploading..." : "Save"}
+              </Button>
+
+              <Button
+                className="rounded-3xl h-[60px]  w-full text-xl bg-red-500 hover:bg-red-600"
+                size={"lg"}
+                onClick={deleteRecording}
+              >
+                <Trash size={30} className="mr-2" />
               </Button>
             </div>
           </div>

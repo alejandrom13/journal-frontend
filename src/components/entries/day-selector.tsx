@@ -75,7 +75,7 @@ const MonthCarousel: React.FC<MonthCarouselProps> = ({
   };
 
   return (
-    <div className="relative p-4">
+    <div className="relative pt-4">
 
       <div className="overflow-hidden relative select-none" ref={viewportRef}>
         <div className="embla__container flex">

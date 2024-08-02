@@ -20,6 +20,7 @@ import queryKey from "@/lib/queryKeys";
 import CalendarCard from "@/components/entries/calendar/calendar";
 import { DayPicker } from "react-day-picker";
 import { useDateStore } from "@/app/states/calendarState";
+import AudioCard from "@/components/entries/audio/audio-card";
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
 
@@ -43,11 +44,12 @@ const HomePage = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   return (
     <>
+    <div className="flex flex-col items-center">
       <Popover open={popoverOpen}>
         <PopoverTrigger asChild>
           <Button
             variant={"outline"}
-            className="border-none rounded-full font-semibold text-md"
+            className="border-none w-52 rounded-full font-semibold text-md text-primary hover:text-primary"
             onClick={() => setPopoverOpen((prev) => !prev)}
           >
             <CalendarIcon className="mr-2" size={20} />
@@ -69,6 +71,7 @@ const HomePage = () => {
           />
         </PopoverContent>
       </Popover>
+      </div>
 
       <MonthCarousel
         initialDate={selectedDate}
@@ -107,6 +110,8 @@ const HomePage = () => {
                 return (
                   <CalendarCard key={entry.id} entry={entry} index={index} />
                 );
+              case "audio":
+                return <AudioCard key={entry.id} entry={entry} index={index} />;
               case "spotify":
               // return <SpotifyCard key={entry.id} content={entry} />;
               default:
