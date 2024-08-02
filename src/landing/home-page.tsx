@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-
+import Image from "next/image";
 const HomePageLanding = () => {
   const router = useRouter();
   const { user } = useUser();
@@ -15,9 +15,15 @@ const HomePageLanding = () => {
         <header className="absolute inset-x-0 top-0 z-10 w-full ">
           <div className="px-4 mx-auto sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 lg:h-20">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 ">
                 <a href="#" title="" className="flex">
-                  <img className="w-auto h-8" src="/logo/logo.svg" alt="" />
+                  <Image
+                    className="w-auto h-10 "
+                    height={100}
+                    width={100}
+                    src="/logo/logo.svg"
+                    alt=""
+                  />
                 </a>
               </div>
 
@@ -55,7 +61,7 @@ const HomePageLanding = () => {
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 relative z-20">
             <div className="max-w-xl mx-auto text-center">
               <h1 className="text-4xl font-bold sm:text-6xl">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#468BF4]">
+                <span className="text-primary">
                   Transform Your Day into <span>Insightful</span> Stories
                 </span>
               </h1>

@@ -31,7 +31,13 @@ const HomePage = () => {
     queryKey: [queryKey.ALL_ENTRIES, selectedDate],
     queryFn: () => getAllEntries(selectedDate),
     enabled: !!selectedDate,
+    retry:1,
   });
+
+  if (isError) {
+    // if is Error retry once
+
+  }
 
   const handleSelectDay = (date: Date) => {};
 
@@ -42,36 +48,40 @@ const HomePage = () => {
     }
   }, []);
 
+  {
+    isError && <div>Error</div>;
+  }
+
   const [popoverOpen, setPopoverOpen] = useState(false);
   return (
     <>
-    <div className="flex flex-col items-center">
-      <Popover open={popoverOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className="border-none w-52 rounded-full font-semibold text-md text-primary hover:text-primary"
-            onClick={() => setPopoverOpen((prev) => !prev)}
-          >
-            <CalendarIcon className="mr-2" size={20} />
-            {format(selectedDate, "PPP")}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-4 bg-white/40 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl">
-          <DayPicker
-            mode="single"
-            style={{
-              width: "auto",
-              backgroundColor: "transparent",
-            }}
-            selected={selectedDate}
-            onSelect={(date) => {
-              setSelectedDate(date || new Date());
-              setPopoverOpen(false);
-            }}
-          />
-        </PopoverContent>
-      </Popover>
+      <div className="flex flex-col items-center">
+        <Popover open={popoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className="border-none w-52 rounded-full font-semibold text-md text-primary hover:text-primary"
+              onClick={() => setPopoverOpen((prev) => !prev)}
+            >
+              <CalendarIcon className="mr-2" size={20} />
+              {format(selectedDate, "PPP")}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-4 bg-white/40 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl">
+            <DayPicker
+              mode="single"
+              style={{
+                width: "auto",
+                backgroundColor: "transparent",
+              }}
+              selected={selectedDate}
+              onSelect={(date) => {
+                setSelectedDate(date || new Date());
+                setPopoverOpen(false);
+              }}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <MonthCarousel
@@ -91,7 +101,6 @@ const HomePage = () => {
       )}
 
       {isLoading && <div>Loading...</div>}
-      {isError && <div>Error</div>}
 
       {!isLoading && !isError && isSuccess && data.length === 0 && (
         <div className="w-full h-[350px]">
