@@ -39,7 +39,7 @@ const AddButton = () => {
 
   return (
     <>
-      <div className="fixed bottom-0 left-[60%] transform -translate-x-1/2 mb-10">
+      <div className="sm:hidden fixed bottom-0 left-[50%] transform -translate-x-1/2 mb-10">
         <div className="relative">
           <AnimatePresence>
             {isExpanded && (
@@ -88,7 +88,7 @@ const AddButton = () => {
           >
             <Button
               className={`rounded-full h-[70px] w-[70px] bg-[#3379E3] hover:bg-[#3e75c8] transition-all duration-200
-  ${isExpanded ? "shadow-[0_16px_100px_150px_rgba(255,255,255,0.43)]" : ""}
+  ${isExpanded ? "shadow-[0_16px_100px_150px_rgba(255,255,255,0.53)]" : ""}
 `}
               onClick={toggleExpand}
             >

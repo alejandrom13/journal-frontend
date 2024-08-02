@@ -21,6 +21,7 @@ import CalendarCard from "@/components/entries/calendar/calendar";
 import { DayPicker } from "react-day-picker";
 import { useDateStore } from "@/app/states/calendarState";
 import AudioCard from "@/components/entries/audio/audio-card";
+import AddButton from "@/components/ui/add-button";
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
 
@@ -121,6 +122,7 @@ const HomePage = () => {
       </div>
       <div className="h-36" />
       <CommandButton />
+      <AddButton />
     </>
   );
 };
