@@ -22,6 +22,7 @@ import {
   LucideLightbulb,
   LucideMessageCircle,
   LucideNotebook,
+  LucideSettings2,
   Pen,
   Plus,
   Settings2,
@@ -37,6 +38,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { DashboardIcon } from "@radix-ui/react-icons";
 import SidebarItem from "./sidebar-item";
 import { SignedIn, useClerk, UserButton, useUser } from "@clerk/nextjs";
+import ThemeSwitcher from "../theme-switcher";
 
 const tooltipDelay = 50;
 
@@ -88,6 +90,12 @@ const Sidebar = () => {
             icon={<Box size={20} />}
             label="Integrations"
           />
+
+          <SidebarItem
+            href="/settings"
+            icon={<LucideSettings2 size={20} />}
+            label="Settings"
+          />
         </nav>
         <nav className="mt-auto grid gap-3 p-2">
           {/* <ModeToggle /> */}
@@ -96,7 +104,7 @@ const Sidebar = () => {
             className={`rounded-2xl h-16 text-slate-800 text-md  justify-start gap-3 border border-black/10 hover:bg-white/10`}
             aria-label="Playground"
           >
-            <Plus height={24} className="text-[#3379E3]" />
+            <Plus height={24} className="text-primary" />
             New Block
           </Button>
           <SignedIn>

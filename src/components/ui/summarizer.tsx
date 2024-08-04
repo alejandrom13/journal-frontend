@@ -36,7 +36,7 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
   return (
     <div
       className={`w-full bg-white/40 p-4 rounded-3xl transition-all ease-in
-  ${open ? "shadow-[0_0_10px_4px_rgba(51,121,227,0.5)]" : ""}
+  ${open ? "ring-2 ring-offset-2 ring-primary" : ""}
   `}
     >
       <div
@@ -51,8 +51,8 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
         }}
       >
         <div className="flex flex-row gap-4 items-center">
-          <WandSparkles size={24} className={`text-[#3379E3]`} />
-          <h6 className="text-md font-medium text-[#3379E3]">Summarized</h6>
+          <WandSparkles size={24} className={`text-primary`} />
+          <h6 className="text-md font-medium text-primary">Summarized</h6>
         </div>
 
         <div className="ml-auto">

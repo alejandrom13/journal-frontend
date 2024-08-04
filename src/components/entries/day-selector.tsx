@@ -14,7 +14,7 @@ const Day: React.FC<DayProps> = ({ day, dayName, isSelected, onClick }) => (
         active:scale-90 transition-all ease-in
         ${
           isSelected
-            ? "bg-blue-500 text-white"
+            ? "bg-primary text-white"
             : "bg-white/50 hover:bg-white transition-all ease-in"
         }`}
     onClick={onClick}

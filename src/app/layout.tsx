@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import ThemeSwitcher from "@/components/theme-switcher";
 import { Toaster } from "@/components/ui/sonner";
 import "./prosemirror.css";
+import "react-day-picker/style.css";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -31,8 +32,9 @@ export default function RootLayout({
             fontSans.variable
           )}
           style={{
-            background: "linear-gradient(to bottom, #EFF1FF, #C1C7FF)",
-            transition: "all 0.3s ease-in-out",
+            background:
+              "linear-gradient(to bottom, var(--background-start), var(--background-end))",
+            transition: `all var(--transition-duration) ease-in-out`,
           }}
         >
           <ThemeProvider
@@ -44,6 +46,7 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
           <Toaster />
+
         </body>
       </html>
     </ClerkProvider>

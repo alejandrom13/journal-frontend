@@ -1,14 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { defaultValue } from "./default-value";
+import HomeSkeletonLoader from "../home/skeleton";
 
 const AllBlocksPage = () => {
-
   return (
     <div>
-      <h1>My Editor Page</h1>
-      <div className="bg-white">
-      </div>
+      <HomeSkeletonLoader />
     </div>
   );
 };

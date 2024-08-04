@@ -1,29 +1,46 @@
-import React from "react";
-import { useTheme } from "./theme-context";
-import { Select } from "@/components/ui/select";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateTheme } from "@/actions/handleTheme";
+import { toast } from "sonner";
+import { useTheme } from "@/lib/useTheme";
 
-interface ThemeOption {
-  value: string;
-  label: string;
-}
+const ThemeSwitcher = ({ userId, currentTheme }: any) => {
+  const {
+    theme,
+    setTheme,
+    changeTheme,
+    handleUpdate,
 
-const ThemeSwitcher: React.FC = () => {
-  const { theme, changeTheme } = useTheme();
-
-  const themes: ThemeOption[] = [
-    { value: "light-1", label: "Light 1" },
-    { value: "light-2", label: "Light 2" },
-    { value: "light-3", label: "Light 3" },
-    { value: "dark-1", label: "Dark 1" },
-    { value: "dark-2", label: "Dark 2" },
-    { value: "dark-3", label: "Dark 3" },
-  ];
+    styles,
+  } = useTheme(currentTheme, userId);
 
   return (
-    <Select
-      value={theme}
-      onValueChange={(value:any) => changeTheme(value)}
-    />
+    <div>
+      <h3 className="text-lg font-semibold mt-4">Choose a theme</h3>
+      <div className="flex flex-row gap-4 mt-2">
+        {styles.map((style) => (
+          <Button
+            key={style}
+            onClick={() => {
+              setTheme(style);
+              changeTheme(style);
+              handleUpdate();
+              localStorage.setItem("theme", style); // Save theme to local storage
+              toast.success("Theme updated");
+
+            }}
+            className={`${
+              theme === style
+                ? "bg-primary text-white rounded-full border border-primary/30 "
+                : "bg-white text-primary border border-primary/30 rounded-full  hover:bg-primary/10"
+            }`}
+          >
+            {style}
+          </Button>
+        ))}
+      </div>
+    </div>
   );
 };
 

@@ -16,6 +16,7 @@ export async function POST(req: Request, res: Response) {
 
     const result = await streamText({
       model: openai("gpt-3.5-turbo"),
+
       system: `
     Be an assistant to answer all the questions about the user, and provide the user with the information they need. like a time machine. be friendly.
 

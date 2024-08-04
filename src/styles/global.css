@@ -32,18 +32,16 @@ body {
   scrollbar-color: rgba(59, 130, 246, 0.8) transparent;
 }
 
-.rdp {
-  --rdp-cell-size: 40px;
-  --rdp-accent-color: red; /* Change this to your desired color */
-  --rdp-background-color: #e7edff;
-  --rdp-selected-border: red;
-  /* Optional: Customize other variables as needed */
+.rdp-root {
+  --rdp-accent-color: var(
+    --primary-calendar
+  ); /* Change the accent color to indigo. */
+  --rdp-accent-background-color: #f0f0f0; /* Change the accent background color. */
+  /* Add more CSS variables here. */
 }
-
-.rdp-day_selected,
-.rdp-day_selected:focus-visible,
-.rdp-day_selected:hover {
-  background-color: var(--rdp-accent-color);
+.rdp-root button {
+  font-size: 16px;
+  font-weight: 500;
 }
 
 #__next {
@@ -59,6 +57,7 @@ body {
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 216 76% 55%;
+    --primary-calendar: #3379e3;
     --primary-foreground: 0 0% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
@@ -77,6 +76,38 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    --background-start: #eff1ff;
+    --background-end: #c1c7ff;
+    --transition-duration: 0.3s;
+  }
+
+  /* Theme 1 */
+  [data-theme="Emerald"] {
+    --background-start: #f5f7f9;
+    --background-end: #dadcde;
+    --primary: 137 43% 46%;
+    --primary-calendar: #43a85f;
+  }
+
+  [data-theme="Sunset Glow"] {
+    --background-start: #ffe8e1; /* Peach Cream */
+    --background-end: #ffadad; /* Coral Glow */
+    --primary: 10 80% 60%; /* Warm Coral */
+    --primary-calendar: #ff6f61; /* Sunset Orange */
+  }
+
+  [data-theme="Lavender Mist"] {
+    --background-start: #f3e5f5; /* Lavender Blush */
+    --background-end: #e1bee7;   /* Soft Lilac */
+    --primary: 270 56% 58%; /* Lavender Purple */
+    --primary-calendar: #ab47bc; /* Bright Orchid */
+  }
+
+
+
+  .rdp-chevron {
+    fill: hsl(var(--primary)) !important;
   }
 
   .dark {
@@ -114,4 +145,8 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.svg-icon {
+  color: hsl(var(--primary));
 }

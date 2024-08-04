@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import Image from "next/image";
+import MainLogo from "@/lib/logo";
 const HomePageLanding = () => {
   const router = useRouter();
   const { user } = useUser();
@@ -16,15 +17,9 @@ const HomePageLanding = () => {
           <div className="px-4 mx-auto sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 lg:h-20">
               <div className="flex-shrink-0 ">
-                <a href="#" title="" className="flex">
-                  <Image
-                    className="w-auto h-10 "
-                    height={100}
-                    width={100}
-                    src="/logo/logo.svg"
-                    alt=""
-                  />
-                </a>
+                <div className="w-auto">
+                  <MainLogo height={40} />
+                </div>
               </div>
 
               <div className="lg:flex lg:items-center lg:justify-end lg:space-x-6 sm:ml-auto">

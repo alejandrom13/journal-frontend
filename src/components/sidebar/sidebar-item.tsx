@@ -25,8 +25,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     <Button
       variant="ghost"
       className={`rounded-2xl group text-slate-800 py-3 h-16 justify-start gap-3 text-md w-full transition-all duration-200 hover:bg-white 
-        ${isActive ? "hover:text-[#3379E3]" : ""}
-        ${isActive ? "bg-white border-2 border-primary/20 text-[#3379E3]" : ""}`}
+        ${isActive ? "hover:text-primary" : ""}
+        ${isActive ? "bg-white border-2 border-primary/20 text-primary" : ""}`}
       aria-label={label}
       onClick={onClick}
       asChild
