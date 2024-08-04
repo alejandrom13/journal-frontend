@@ -2,7 +2,7 @@
 
 import { clerkClient } from "@clerk/nextjs/server";
 
-async function updateTheme(data:any) {
+async function updateTheme(data: any) {
   console.log("data", data);
   console.log("userId", data?.userId);
   console.log("theme", data?.theme);
@@ -13,11 +13,6 @@ async function updateTheme(data:any) {
     },
   });
 
-  if (response.publicMetadata) {
-    console.log("response.publicMetadata", response.publicMetadata);
-  }
-
-  console.log("response", response);
   return JSON.stringify(response);
 }
 

@@ -39,6 +39,7 @@ import { DashboardIcon } from "@radix-ui/react-icons";
 import SidebarItem from "./sidebar-item";
 import { SignedIn, useClerk, UserButton, useUser } from "@clerk/nextjs";
 import ThemeSwitcher from "../theme-switcher";
+import MainLogo from "@/lib/logo";
 
 const tooltipDelay = 50;
 
@@ -69,6 +70,10 @@ const Sidebar = () => {
     <div className="hidden md:block lg:block py-6 pl-6">
       <aside className="inset-y w-80 rounded-3xl left-0 z-20 flex h-full flex-col  bg-background/50 shadow-[0_4px_22px_0_rgba(0,0,0,0.1)] ">
         <nav className="grid gap-1 p-2 w-full">
+          <div className="w-full p-4 bg-white rounded-2xl mb-4 flex items-center justify-center">
+            <MainLogo height={40} />
+          </div>
+
           <SidebarItem
             href="/home"
             icon={<LucideNotebook size={20} />}

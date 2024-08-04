@@ -75,9 +75,7 @@ const HomePage = () => {
   return (
     <>
       <div className="flex flex-row justify-center">
-        <div className="absolute top-[30px] left-[340px] hidden md:block">
-          <MainLogo height={30} />
-        </div>
+
         <div className="">
           <Popover open={popoverOpen}>
             <AnimatePresence>
