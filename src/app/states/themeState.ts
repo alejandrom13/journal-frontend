@@ -1,15 +1,23 @@
-import { create } from 'zustand';
+// src/store/themeStore.ts
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
-// Define the shape of your state
 interface ThemeState {
-  theme: string;
-  setTheme: (newTheme: string) => void;
+  curTheme: string
+  changeTheme: (newTheme: string) => void
 }
 
-// Create the Zustand store
-const useThemeStore = create<ThemeState>((set) => ({
-  theme: 'default', // default theme
-  setTheme: (newTheme) => set({ theme: newTheme }),
-}));
-
-export default useThemeStore;
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set) => ({
+      curTheme: 'default',
+      changeTheme: (newTheme: string) => {
+        set({ curTheme: newTheme })
+        document.documentElement.setAttribute('data-theme', newTheme)
+      },
+    }),
+    {
+      name: 'theme-storage',
+    }
+  )
+)

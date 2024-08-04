@@ -1,39 +1,35 @@
 "use client";
-import { ThemeProvider } from "@/components/theme-context";
-import ThemeSwitcher from "@/components/theme-switcher";
-import { useTheme } from "@/lib/useTheme";
-import { useUser } from "@clerk/nextjs";
+import { createContext, useContext, useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
-import useThemeStore from "./states/themeState";
+import { useUser } from "@clerk/nextjs";
+import { useThemeStore } from "./states/themeState";
+
+// Create a theme context
+const ThemeContext = createContext<{
+  curTheme: string;
+  changeTheme: (newTheme: string) => void;
+}>({ curTheme: "default", changeTheme: () => {} });
+
+// Custom hook to use the theme
+export const useTheme = () => useContext(ThemeContext);
 
 const queryClient = new QueryClient();
 
-const HomeTemplate = ({ children }: any) => {
+const HomeTemplate = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoaded } = useUser();
-  const { theme, setTheme } = useThemeStore();
+  const { changeTheme } = useThemeStore();
+
   useEffect(() => {
     if (isLoaded && user) {
-      const theme = user?.publicMetadata?.theme! as string;
+      const theme = user.publicMetadata?.theme as string;
       if (theme) {
         changeTheme(theme);
-        setTheme(theme);
       }
-    } else {
+    } else if (isLoaded && !user) {
       changeTheme("default");
     }
-  }, [isLoaded, setTheme, user]);
+  }, [isLoaded, user, changeTheme]);
 
-  const changeTheme = (newTheme: string) => {
-    document.documentElement.setAttribute("data-theme", newTheme);
-  };
-
-  useEffect(() => {
-    if (user?.publicMetadata?.theme) {
-      changeTheme(user?.publicMetadata?.theme! as string);
-    }
-  }),
-    [user?.publicMetadata?.theme];
 
   return (
     <>

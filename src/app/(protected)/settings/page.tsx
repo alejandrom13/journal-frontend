@@ -51,7 +51,7 @@ const SettingsPage = () => {
         <p className="text-gray-500">
           Customize your <span className="font-bold">Jana AI</span> interface
         </p>
-        <ThemeSwitcher userId={user?.id!} currentTheme={user?.publicMetadata?.theme} />
+        <ThemeSwitcher />
       </div>
     </div>
   );

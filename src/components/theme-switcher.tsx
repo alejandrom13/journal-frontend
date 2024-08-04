@@ -1,27 +1,35 @@
-import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateTheme } from "@/actions/handleTheme";
 import { toast } from "sonner";
-import { useTheme } from "@/lib/useTheme";
+import { useUser } from "@clerk/nextjs";
+import { useThemeStore } from "@/app/states/themeState";
 
-const ThemeSwitcher = ({ userId, currentTheme }: any) => {
-  const [curTheme, setCurTheme] = useState(currentTheme);
 
-  useEffect(() => {
-    if (currentTheme) {
-      setCurTheme(currentTheme);
+const styles = [
+  { name: "Default", value: "default" },
+  { name: "Emerald", value: "emerald" },
+  { name: "Sunset Glow", value: "sunset_glow" },
+  { name: "Lavender Mist", value: "lavender_mist" },
+];
+
+const ThemeSwitcher = () => {
+  const { curTheme, changeTheme } = useThemeStore();
+  const { user } = useUser();
+
+  const handleUpdate = async (newTheme: string, userId: string) => {
+    try {
+      const data = {
+        userId,
+        theme: newTheme,
+      };
+
+      await updateTheme(data);
+      changeTheme(newTheme);
+      toast.success("Theme updated");
+    } catch (error) {
+      toast.error("An error occurred while updating the theme");
     }
-  }, [currentTheme]);
-
-  const {
-    theme,
-    setTheme,
-    changeTheme,
-    handleUpdate,
-
-    styles,
-  } = useTheme(currentTheme, userId);
+  };
 
   return (
     <div>
@@ -30,18 +38,11 @@ const ThemeSwitcher = ({ userId, currentTheme }: any) => {
         {styles.map((style) => (
           <Button
             key={style.value}
-            onClick={() => {
-              setTheme(style.value);
-              setCurTheme(style.value);
-              changeTheme(style.value);
-              handleUpdate(style.value);
-
-              toast.success("Theme updated");
-            }}
+            onClick={() => handleUpdate(style.value, user?.id!)}
             className={`${
               curTheme === style.value
-                ? "bg-primary text-white rounded-full border border-primary/30 "
-                : "bg-white text-primary border border-primary/30 rounded-full  hover:bg-primary/10"
+                ? "bg-primary text-white rounded-full border border-primary/30"
+                : "bg-white text-primary border border-primary/30 rounded-full hover:bg-primary/10"
             }`}
           >
             {style.name}

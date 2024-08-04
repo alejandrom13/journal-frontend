@@ -7,6 +7,8 @@ export const useTheme = (currentTheme: any, userId: string) => {
   const [theme, setTheme] = useState(currentTheme || "Default");
   const [isUpdating, setIsUpdating] = useState(false);
 
+  
+
   const changeTheme = (newTheme: string) => {
     document.documentElement.setAttribute("data-theme", newTheme);
     setTheme(newTheme);
