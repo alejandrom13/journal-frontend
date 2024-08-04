@@ -8,19 +8,24 @@ import { MinimalTiptapEditor } from "../ui/minimal-tiptap";
 interface EditorProps {
   value?: any;
   onChange: (data: any) => void;
+  disableToolbar?: boolean;
 }
 
-const Editor2: React.FC<EditorProps> = ({ value, onChange }) => {
+const Editor2: React.FC<EditorProps> = ({
+  value,
+  onChange,
+  disableToolbar = true,
+}) => {
   return (
     <MinimalTiptapEditor
       value={value}
-      onValueChange={(val:string) => {
+      onValueChange={(val: string) => {
         onChange(val);
       }}
       outputValue="json"
       disabled={false}
       contentClass=""
-      disableToolbar 
+      disableToolbar={disableToolbar}
     />
   );
 };

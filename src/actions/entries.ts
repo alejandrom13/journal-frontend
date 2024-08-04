@@ -61,4 +61,22 @@ const createEntry = async ({
     return error;
   }
 };
-export { getAllEntries, createEntry };
+
+const deleteEntry = async (id: string) => {
+  try {
+    const apiUrl = process.env.API_URL;
+
+    const response = await fetch(apiUrl + "/entry/" + id, {
+      method: "DELETE",
+      headers: {
+        Cookie: cookies().toString(),
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    return error;
+  }
+};
+export { getAllEntries, createEntry, deleteEntry };

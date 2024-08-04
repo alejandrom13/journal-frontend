@@ -4,6 +4,7 @@ import { WandSparkles, ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { marked } from "marked";
 import { motion } from "framer-motion";
+import { formatData } from "@/lib/ai/formatData";
 interface SummarizerProps {
   data: any;
   openState?: boolean;
@@ -83,31 +84,3 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
 };
 
 export default SummarizerComponent;
-
-type DataItem = {
-  id: string;
-  type: string;
-  content: Record<string, any>;
-  userId?: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-function formatData(items: DataItem[]): string {
-  return items
-    .map((item) => {
-      const contentString = JSON.stringify(
-        item.content,
-        (key, value) => {
-          if (Array.isArray(value))
-            return value.map((v) =>
-              typeof v === "object" ? JSON.stringify(v) : v
-            );
-          return value;
-        },
-        2
-      );
-      return `type: ${item.type}\ncontent: ${contentString}\ncreated: ${item.createdAt}\n---`;
-    })
-    .join("\n");
-}

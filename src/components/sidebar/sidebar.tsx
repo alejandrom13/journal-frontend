@@ -64,7 +64,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="hidden sm:block py-6 pl-6">
+    <div className="hidden md:block lg:block py-6 pl-6">
       <aside className="inset-y w-80 rounded-3xl left-0 z-20 flex h-full flex-col  bg-background/50 shadow-[0_4px_22px_0_rgba(0,0,0,0.1)] ">
         <nav className="grid gap-1 p-2 w-full">
           <SidebarItem
@@ -81,6 +81,7 @@ const Sidebar = () => {
             href="/chat"
             icon={<LucideMessageCircle size={20} />}
             label="Chat"
+            rightLabel="BETA"
           />
           <SidebarItem
             href="/integrations"

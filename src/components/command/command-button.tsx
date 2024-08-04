@@ -63,8 +63,8 @@ const CommandButton = () => {
                   variant="ghost"
                   className={`rounded-full w-[90px] h-[60px] gap-3 bg-white duration-200   ${
                     activeButton === key
-                      ? "text-white bg-[#3379E3] hover:bg-[#3379E3]  hover:text-white"
-                      : "text-[#3379E3]"
+                      ? "text-white bg-primary hover:bg-primary  hover:text-white"
+                      : "text-primary"
                   }`}
                   onClick={() =>
                     setActiveButton(activeButton === key ? null : key)

@@ -8,7 +8,7 @@ interface SidebarItemProps {
   icon: React.ReactNode;
   label: string;
   onClick?: () => void;
-  shortcut?: string;
+  rightLabel?: string;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -16,7 +16,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   icon,
   label,
   onClick,
-  shortcut,
+  rightLabel,
 }) => {
   const pathname = usePathname();
   const isActive = pathname === href;
@@ -34,7 +34,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
       <Link href={href}>
         {icon}
         {label}
-              <span className="ml-auto text-sm text-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200">{shortcut}</span>
+              <span className={`ml-auto text-sm text-black/30  ${isActive ? "opacity-100": "opacity-0"}  group-hover:opacity-100 transition-opacity duration-200`}>{rightLabel}</span>
 
       </Link>
 

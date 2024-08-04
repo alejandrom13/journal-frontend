@@ -22,31 +22,30 @@ import { DayPicker } from "react-day-picker";
 import { useDateStore } from "@/app/states/calendarState";
 import AudioCard from "@/components/entries/audio/audio-card";
 import AddButton from "@/components/ui/add-button";
+import { AnimatePresence, m, motion } from "framer-motion";
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
 
   const [openSummarizer, setSummarizer] = useState(false);
 
+  const [allEntries = [], setAllEntries] = useState([]);
+
+  const [filteredEntries, setFilteredEntries] = useState([]);
+
   const { isLoading, isError, data, isSuccess } = useQuery({
     queryKey: [queryKey.ALL_ENTRIES, selectedDate],
     queryFn: () => getAllEntries(selectedDate),
     enabled: !!selectedDate,
-    retry:1,
+    retry: 1,
   });
 
-  if (isError) {
-    // if is Error retry once
-
-  }
+  useEffect(() => {
+    if (data) {
+      setAllEntries(data);
+    }
+  }, [data]);
 
   const handleSelectDay = (date: Date) => {};
-
-  useEffect(() => {
-    // Scroll to top on component mount
-    if (typeof window !== "undefined") {
-      window.scrollTo(0, 0);
-    }
-  }, []);
 
   {
     isError && <div>Error</div>;
@@ -55,17 +54,28 @@ const HomePage = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   return (
     <>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-row items-center justify-center">
         <Popover open={popoverOpen}>
           <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className="border-none w-52 rounded-full font-semibold text-md text-primary hover:text-primary"
-              onClick={() => setPopoverOpen((prev) => !prev)}
-            >
-              <CalendarIcon className="mr-2" size={20} />
-              {format(selectedDate, "PPP")}
-            </Button>
+            <AnimatePresence>
+              <motion.div
+                layout
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="flex"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+              >
+                <Button
+                  variant={"outline"}
+                  className="border-none w-52 rounded-full font-semibold text-md text-primary hover:text-primary"
+                  onClick={() => setPopoverOpen((prev) => !prev)}
+                >
+                  <CalendarIcon className="mr-2" size={20} />
+                  {format(selectedDate, "PPP")}
+                </Button>
+              </motion.div>
+            </AnimatePresence>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-4 bg-white/40 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl">
             <DayPicker
@@ -79,11 +89,42 @@ const HomePage = () => {
                 setSelectedDate(date || new Date());
                 setPopoverOpen(false);
               }}
+              showOutsideDays
             />
           </PopoverContent>
         </Popover>
-      </div>
 
+        <AnimatePresence>
+          <motion.div
+            layout
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="flex"
+          >
+            {selectedDate &&
+              (selectedDate.getDate() !== new Date().getDate() ||
+                selectedDate.getMonth() !== new Date().getMonth() ||
+                selectedDate.getFullYear() !== new Date().getFullYear()) && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <Button
+                    className="ml-2 rounded-full border border-primary/20 bg-transparent font-semibold text-md text-primary hover:text-primary"
+                    onClick={() => {
+                      setSelectedDate(new Date());
+                      setSummarizer(false);
+                    }}
+                    variant={"outline"}
+                  >
+                    Today
+                  </Button>
+                </motion.div>
+              )}
+          </motion.div>
+        </AnimatePresence>
+      </div>
       <MonthCarousel
         initialDate={selectedDate}
         onChange={(newDate) => {
@@ -96,7 +137,34 @@ const HomePage = () => {
       {data?.length > 0 && (
         <>
           <SummarizerComponent data={data} openState={openSummarizer} />
-          <div className="pt-6"></div>
+
+          <div className="flex flex-row py-4 gap-2">
+            <Button
+              className="rounded-full bg-primary hover:bg-primary/80 hover:text-white text-white border-none"
+              variant={"outline"}
+            >
+              All
+            </Button>
+            <Button
+              className="rounded-full bg-transparent border hover:bg-white/10 border-black/20"
+              variant={"outline"}
+            >
+              Notes
+            </Button>
+            <Button
+              className="rounded-full bg-transparent border hover:bg-white/10 border-black/20"
+              variant={"outline"}
+            >
+              Audio
+            </Button>
+
+            <Button
+              className="rounded-full bg-transparent border hover:bg-white/10 border-black/20"
+              variant={"outline"}
+            >
+              Calendar
+            </Button>
+          </div>
         </>
       )}
 
@@ -110,9 +178,9 @@ const HomePage = () => {
           />
         </div>
       )}
-      <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto">
         {data &&
-          data?.map((entry: any, index: any) => {
+          allEntries.map((entry: any, index: any) => {
             switch (entry.type) {
               case "note":
                 return <NoteCard key={entry.id} entry={entry} index={index} />;

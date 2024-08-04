@@ -18,6 +18,9 @@ export const theme = {
     },
   },
   extend: {
+    gridAutoRows: {
+      'auto-max': 'minmax(auto, max-content)',
+    },
     colors: {
       border: "hsl(var(--border))",
       input: "hsl(var(--input))",
@@ -77,4 +80,16 @@ export const theme = {
     },
   },
 };
-export const plugins = [require("tailwindcss-animate"), require('@tailwindcss/typography')];
+export const plugins = [
+  require("tailwindcss-animate"),
+  require("@tailwindcss/typography"),
+  require("tailwindcss-animate"), // make sure to "npm install tailwindcss-animate"
+  require("@assistant-ui/react/tailwindcss"),
+  function ({ addUtilities }) {
+    addUtilities({
+      '.break-inside': {
+        'break-inside': 'avoid-column',
+      },
+    });
+  },
+];
