@@ -8,6 +8,12 @@ import { useTheme } from "@/lib/useTheme";
 const ThemeSwitcher = ({ userId, currentTheme }: any) => {
   const [curTheme, setCurTheme] = useState(currentTheme);
 
+  useEffect(() => {
+    if (currentTheme) {
+      setCurTheme(currentTheme);
+    }
+  }, [currentTheme]);
+
   const {
     theme,
     setTheme,
@@ -28,7 +34,7 @@ const ThemeSwitcher = ({ userId, currentTheme }: any) => {
               setTheme(style.value);
               setCurTheme(style.value);
               changeTheme(style.value);
-              handleUpdate();
+              handleUpdate(style.value);
 
               toast.success("Theme updated");
             }}

@@ -5,30 +5,31 @@ import { toast } from "sonner";
 
 export const useTheme = (currentTheme: any, userId: string) => {
   const [theme, setTheme] = useState(currentTheme || "Default");
-
-  useEffect(() => {
-    if (currentTheme) {
-      setTheme(currentTheme);
-      changeTheme(currentTheme);
-    } else {
-      setTheme("Default");
-    }
-  }, [currentTheme]);
-
-  const { mutate, isPending, isSuccess } = useMutation({
-    mutationFn: () => updateTheme(userId, theme),
-    onSuccess: () => {
-      toast.success("Theme updated");
-    },
-  });
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const changeTheme = (newTheme: string) => {
     document.documentElement.setAttribute("data-theme", newTheme);
     setTheme(newTheme);
   };
 
-  const handleUpdate = () => {
-    mutate();
+  const handleUpdate = async (newTheme: string) => {
+    setIsUpdating(true);
+    try {
+      const data = JSON.parse(
+        JSON.stringify({
+          userId,
+          theme: newTheme,
+        })
+      );
+
+      const result = await updateTheme(data);
+      setIsUpdating(false);
+      return result;
+    } catch (error) {
+      toast.error("An error occurred while updating the theme");
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const styles = [
@@ -55,8 +56,7 @@ export const useTheme = (currentTheme: any, userId: string) => {
     setTheme,
     changeTheme,
     handleUpdate,
-    isPending,
-    isSuccess,
+
     styles,
   };
 };

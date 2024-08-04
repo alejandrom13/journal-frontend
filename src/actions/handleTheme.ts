@@ -2,14 +2,23 @@
 
 import { clerkClient } from "@clerk/nextjs/server";
 
-const updateTheme = async (userId: string, theme: string) => {
-  const response = await clerkClient.users.updateUserMetadata(userId, {
+async function updateTheme(data:any) {
+  console.log("data", data);
+  console.log("userId", data?.userId);
+  console.log("theme", data?.theme);
+  const clerk = clerkClient();
+  const response = await clerk.users.updateUserMetadata(data?.userId, {
     publicMetadata: {
-      theme: theme,
+      theme: data?.theme,
     },
   });
 
-  return response;
-};
+  if (response.publicMetadata) {
+    console.log("response.publicMetadata", response.publicMetadata);
+  }
+
+  console.log("response", response);
+  return JSON.stringify(response);
+}
 
 export { updateTheme };
