@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { useTheme } from "@/lib/useTheme";
 
 const ThemeSwitcher = ({ userId, currentTheme }: any) => {
+  const [curTheme, setCurTheme] = useState(currentTheme);
+
   const {
     theme,
     setTheme,
@@ -21,22 +23,22 @@ const ThemeSwitcher = ({ userId, currentTheme }: any) => {
       <div className="flex flex-row gap-4 mt-2">
         {styles.map((style) => (
           <Button
-            key={style}
+            key={style.value}
             onClick={() => {
-              setTheme(style);
-              changeTheme(style);
+              setTheme(style.value);
+              setCurTheme(style.value);
+              changeTheme(style.value);
               handleUpdate();
-              localStorage.setItem("theme", style); // Save theme to local storage
-              toast.success("Theme updated");
 
+              toast.success("Theme updated");
             }}
             className={`${
-              theme === style
+              curTheme === style.value
                 ? "bg-primary text-white rounded-full border border-primary/30 "
                 : "bg-white text-primary border border-primary/30 rounded-full  hover:bg-primary/10"
             }`}
           >
-            {style}
+            {style.name}
           </Button>
         ))}
       </div>

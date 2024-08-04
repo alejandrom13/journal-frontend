@@ -83,21 +83,21 @@ body {
   }
 
   /* Theme 1 */
-  [data-theme="Emerald"] {
+  [data-theme="emerald"] {
     --background-start: #f5f7f9;
     --background-end: #dadcde;
     --primary: 137 43% 46%;
     --primary-calendar: #43a85f;
   }
 
-  [data-theme="Sunset Glow"] {
+  [data-theme="sunset_glow"] {
     --background-start: #ffe8e1; /* Peach Cream */
     --background-end: #ffadad; /* Coral Glow */
     --primary: 10 80% 60%; /* Warm Coral */
     --primary-calendar: #ff6f61; /* Sunset Orange */
   }
 
-  [data-theme="Lavender Mist"] {
+  [data-theme="lavender_mist"] {
     --background-start: #f3e5f5; /* Lavender Blush */
     --background-end: #e1bee7;   /* Soft Lilac */
     --primary: 270 56% 58%; /* Lavender Purple */

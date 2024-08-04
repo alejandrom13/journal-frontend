@@ -9,12 +9,17 @@ import { useEffect } from "react";
 const queryClient = new QueryClient();
 
 const HomeTemplate = ({ children }: any) => {
+  const { user } = useUser();
   useEffect(() => {
-    if (localStorage.getItem("theme")) {
-      changeTheme(localStorage.getItem("theme")!);
+    // if (localStorage.getItem("theme")) {
+    //   changeTheme(localStorage.getItem("theme")!);
+    // }
+    if (user?.publicMetadata?.theme) {
+      changeTheme(user?.publicMetadata?.theme! as string);
+    } else {
+      changeTheme("default");
     }
   }, []);
-  const { user } = useUser();
 
   const changeTheme = (newTheme: string) => {
     document.documentElement.setAttribute("data-theme", newTheme);
