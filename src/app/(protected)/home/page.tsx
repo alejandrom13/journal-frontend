@@ -247,7 +247,7 @@ const HomePage = () => {
               switch (entry.type) {
                 case "note":
                   return (
-                    <NoteCard key={entry.id} entry={entry} index={index} />
+                    <NoteCard key={entry.id} entry={entry} index={index} id={entry.id} />
                   );
                 case "calendar":
                   return (

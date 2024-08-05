@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
 import Editor2 from "@/components/editor/editor2";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateEntry } from "@/actions/entries";
+import { createEntry, updateEntry } from "@/actions/entries";
 import queryKey from "@/lib/queryKeys";
 import { Button } from "@/components/ui/button";
 import DeleteEntryButton from "../delete-entry-button";
@@ -16,16 +16,19 @@ const NoteCard = ({ entry, index, id }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { isError, isPending, isSuccess, mutate } = useMutation({
-    mutationFn: (variables: { id: string; type: string; content: any }) =>
-      updateEntry(variables),
+  const { isError, isPending, isSuccess, mutate, data } = useMutation({
+    mutationFn: (variables: {
+      id: string;
+      type: string;
+      content: any;
+      createdAt: string;
+    }) => updateEntry(variables),
     onSuccess: async () => {
-      console.log("Success");
-
       toast.success("Note updated");
 
-      await queryClient.invalidateQueries({ queryKey: [queryKey.ALL_ENTRIES] });
-
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.ALL_ENTRIES],
+      });
       setIsOpen(false);
     },
     onError: (error: any) => {
@@ -33,13 +36,22 @@ const NoteCard = ({ entry, index, id }: any) => {
     },
   });
 
+  useEffect(() => {
+
+    if(isSuccess){
+      console.log("Success");
+    }
+    
+  }, [isSuccess]);
+
   const handleSubmission = () => {
     if (editorValue) {
       const jsonRes = JSON.parse(editorValue);
       mutate({
-        id: entry?.id,
+        id: id,
         type: "note",
         content: jsonRes,
+        createdAt: entry?.createdAt,
       });
     } else {
       console.warn("No content to submit");

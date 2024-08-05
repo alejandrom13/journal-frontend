@@ -66,15 +66,15 @@ const updateEntry = async ({
   id,
   type,
   content,
+  createdAt,
 }: {
   id: string;
   type: string;
   content: any;
+  createdAt: string;
 }) => {
   try {
     const apiUrl = process.env.API_URL;
-
-    console.log("id", id);
 
     const response = await fetch(apiUrl + "/entry/" + id, {
       method: "PATCH",
@@ -85,13 +85,13 @@ const updateEntry = async ({
       body: JSON.stringify({
         type: type,
         content: content,
+        createdAt: createdAt,
       }),
     });
-    console.log(response);
+
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error:", error);
     return error;
   }
 };
