@@ -80,7 +80,7 @@ const Sidebar = () => {
             label="Journal"
           />
           <SidebarItem
-            href="/blocks"
+            href="/insights"
             icon={<LucideLightbulb size={20} />}
             label="Insights"
           />
@@ -104,14 +104,14 @@ const Sidebar = () => {
         </nav>
         <nav className="mt-auto grid gap-3 p-2">
           {/* <ModeToggle /> */}
-          <Button
+          {/* <Button
             variant="ghost"
             className={`rounded-2xl h-16 text-slate-800 text-md  justify-start gap-3 border border-black/10 hover:bg-white/10`}
             aria-label="Playground"
           >
             <Plus height={24} className="text-primary" />
             New Block
-          </Button>
+          </Button> */}
           <SignedIn>
             <Button
               variant="ghost"

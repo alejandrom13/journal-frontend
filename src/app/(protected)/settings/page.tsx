@@ -9,9 +9,15 @@ import React from "react";
 const SettingsPage = () => {
   const { user } = useUser();
   return (
-    <div className="p-4 bg-white/50 rounded-3xl h-full w-full overflow-auto">
-      <div className="w-full bg-white/80 rounded-2xl p-6 shadow-lg">
-        <h1 className="text-2xl font-semibold">Personal Info</h1>
+    <div className="  h-full w-full overflow-auto">
+      <div className="flex flex-col gap-2 ">
+        <h1 className=" text-3xl font-medium">Settings</h1>
+        <p className="text-black/80 ">
+          Manage your account settings and preferences
+        </p>
+      </div>
+      <div className="w-full bg-white/50 rounded-2xl p-6 mt-8">
+        <h1 className="text-2xl font-medium">Personal Info</h1>
         <p className="text-gray-500">Update your profile here</p>
 
         <div className="mt-6">
@@ -46,8 +52,8 @@ const SettingsPage = () => {
           </div>
         </div>
       </div>
-      <div className="w-full mt-8 bg-white/80 rounded-2xl p-6 shadow-lg">
-        <h1 className="text-2xl font-semibold">Appearance</h1>
+      <div className="w-full mt-8 bg-white/50 rounded-2xl p-6 ">
+        <h1 className="text-2xl font-medium">Appearance</h1>
         <p className="text-gray-500">
           Customize your <span className="font-bold">Jana AI</span> interface
         </p>

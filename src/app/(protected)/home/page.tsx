@@ -25,14 +25,9 @@ import { AnimatePresence, m, motion } from "framer-motion";
 import HomeSkeletonLoader from "./skeleton";
 import MainLogo from "@/lib/logo";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import { Entry } from "@/lib/entryType";
 
-interface Entry {
-  id: string;
-  type: string;
-  content: {};
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();

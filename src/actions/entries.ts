@@ -19,7 +19,32 @@ async function getAllEntries(date: Date) {
     }
 
     const data = await response.json();
- 
+
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+}
+
+async function getAllEntriesByRange({ from, to }: { from: Date; to: Date }) {
+  //format date to yyyy-mm-dd
+  try {
+    const fromDate = from.toISOString().split("T")[0];
+    const toDate = to.toISOString().split("T")[0];
+
+    const response = await fetch(apiUrl + `/entry/all/${fromDate}/${toDate}`, {
+      headers: {
+        Cookie: cookies().toString(),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data = await response.json();
+    console.log(data);
 
     return data;
   } catch (error) {
@@ -111,4 +136,10 @@ const deleteEntry = async (id: string) => {
     return error;
   }
 };
-export { getAllEntries, createEntry, deleteEntry, updateEntry };
+export {
+  getAllEntries,
+  createEntry,
+  deleteEntry,
+  updateEntry,
+  getAllEntriesByRange,
+};

@@ -1,0 +1,323 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { defaultValue } from "./default-value";
+import HomeSkeletonLoader from "../home/skeleton";
+import TotalCard from "./totalCard";
+import { LucideAudioWaveform, LucideCalendar } from "lucide-react";
+import { useDateStore } from "@/app/states/calendarState";
+import { getAllEntries, getAllEntriesByRange } from "@/actions/entries";
+import queryKey from "@/lib/queryKeys";
+import { Entry } from "@/lib/entryType";
+import { useQuery } from "@tanstack/react-query";
+import { Icon } from "@iconify/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { generateSentimentAnalysis } from "@/actions/ai";
+import SentimentCard from "./sentiment";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+const uniqueTypes = [
+  {
+    id: "today",
+    type: "Today",
+  },
+  {
+    id: "7days",
+    type: "7 days",
+  },
+  {
+    id: "30days",
+    type: "30 days",
+  },
+];
+
+const InsightsPage = () => {
+  const { selectedDate, setSelectedDate } = useDateStore();
+  const [dateRange, setDateRange] = useState({
+    from: new Date(),
+    to: new Date(),
+  });
+
+  const { isLoading, isError, data, isSuccess } = useQuery<Entry[]>({
+    queryKey: [queryKey.ALL_ENTRIES_RANGE, dateRange],
+    queryFn: () => getAllEntriesByRange(dateRange),
+    enabled: !!selectedDate,
+    retry: 1,
+  });
+
+  const {
+    isLoading: isSentimentLoading,
+    isError: isSentimentError,
+    data: sentiment,
+    isSuccess: isSentimentSuccess,
+  } = useQuery<any>({
+    queryKey: [queryKey.SENTIMENT_ANALYSIS, data],
+    queryFn: () => generateSentimentAnalysis(data),
+    enabled: !!data,
+    refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
+    refetchOnMount: false,
+  });
+
+  const [sentimentData, setSentimentData] = useState<any>(sentiment);
+
+  useEffect(() => {
+    if (isSentimentSuccess) {
+      setSentimentData(sentiment);
+    }
+  }, [isSentimentSuccess, sentiment, sentimentData]);
+
+  const [selectedType, setSelectedType] = useState("today");
+
+  return (
+    <div className=" h-full">
+      {isError && <div>error</div>}
+
+      <div className="flex flex-row py-4 gap-2 items-end justify-end">
+        <AnimatePresence initial={false}>
+          {uniqueTypes.map((type) => (
+            <motion.div
+              key={type.id}
+              layout
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 25,
+                duration: 0.1,
+              }}
+            >
+              <Button
+                className={`rounded-full ${
+                  selectedType === type.id
+                    ? "bg-primary hover:bg-primary text-white hover:text-white"
+                    : "bg-transparent border hover:bg-white/40 border-black/20"
+                }`}
+                variant="outline"
+                onClick={() => {
+                  setSelectedType(type.id);
+                  const today = new Date();
+                  let from = new Date();
+                  let to = new Date();
+
+                  if (type.id === "today") {
+                    from = new Date();
+                    to = new Date();
+                  }
+
+                  if (type.id === "7days") {
+                    from.setDate(today.getDate() - 7);
+                  }
+
+                  if (type.id === "30days") {
+                    from.setDate(today.getDate() - 30);
+                  }
+
+                  setDateRange({
+                    from: from,
+                    to: to,
+                  });
+                }}
+              >
+                {type.type}
+              </Button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {isLoading && (
+        <>
+          <HomeSkeletonLoader />
+        </>
+      )}
+
+      {data?.length! > 0 && (
+        <div className="grid grid-cols-3 gap-3">
+          <TotalCard
+            title="Notes"
+            value={data?.filter((item) => item.type === "note").length || 0}
+            iconSize="w-6 h-6"
+            icon={
+              <svg
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                className="svg-icon"
+              >
+                <path
+                  d="M17.75 3A3.25 3.25 0 0 1 21 6.25V13h-4.75A3.25 3.25 0 0 0 13 16.25V21H6.25A3.25 3.25 0 0 1 3 17.75V6.25A3.25 3.25 0 0 1 6.25 3h11.5Zm2.81 11.5-6.06 6.06v-4.31c0-.966.784-1.75 1.75-1.75h4.31Z"
+                  fill="currentColor"
+                />
+              </svg>
+            }
+            color="bg-primary/20"
+          />
+
+          <TotalCard
+            title="Events"
+            value={data?.filter((item) => item.type === "calendar").length || 0}
+            iconSize="w-5 h-5"
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                className="svg-icon"
+                fill="currentColor"
+              >
+                <path d="M0,19a5.006,5.006,0,0,0,5,5H19a5.006,5.006,0,0,0,5-5V10H0Zm17-4.5A1.5,1.5,0,1,1,15.5,16,1.5,1.5,0,0,1,17,14.5Zm-5,0A1.5,1.5,0,1,1,10.5,16,1.5,1.5,0,0,1,12,14.5Zm-5,0A1.5,1.5,0,1,1,5.5,16,1.5,1.5,0,0,1,7,14.5Z" />
+                <path d="M19,2H18V1a1,1,0,0,0-2,0V2H8V1A1,1,0,0,0,6,1V2H5A5.006,5.006,0,0,0,0,7V8H24V7A5.006,5.006,0,0,0,19,2Z" />
+              </svg>
+            }
+            color="bg-primary/20"
+          />
+
+          <TotalCard
+            title="Voice Notes"
+            value={data?.filter((item) => item.type === "audio").length || 0}
+            iconSize=""
+            icon={
+              <Icon
+                icon="ph:microphone-fill"
+                width="24"
+                height="24"
+                className="text-primary"
+              />
+            }
+            color="bg-primary/20"
+          />
+        </div>
+      )}
+
+      {isSentimentLoading && (
+        <div className="w-full h-10 bg-white/50 animate-pulse mt-4"></div>
+      )}
+
+      <div className="flex flex-row w-full h-full max-h-[500px] gap-4 mt-4 ">
+        <div className="bg-white/50 rounded-3xl p-4 flex flex-col gap-4 w-full">
+          <div className="w-full p-3 flex flex-row bg-white rounded-2xl gap-2 items-center">
+            <Icon
+              icon="mingcute:sparkles-fill"
+              width="24"
+              height="24"
+              className="text-primary"
+            />
+            <h2 className="text-lg font-medium text-primary">Sentiment Analysis</h2>
+            <div className="ml-auto">
+              <TooltipProvider>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size={"icon"}
+                      className="rounded-full bg-transparent hover:bg-black/5 hover:text-primary text-black/50"
+                    >
+                      <Icon icon="uil:info-circle" width="20" height="20" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Sentiment analysis classifies your journal entries into
+                      <br />
+                      categories with scores from <strong>0</strong> (not present) to <strong>100 </strong>
+                       (strongly present).
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+          {sentiment?.length! > 0 && (
+            <div className="p-2 gap-2 flex flex-col">
+              {sentiment?.map((item: SentimentType, index: number) => (
+                <div className=" w-full" key={index}>
+                  <div className="flex flex-row items-center justify-between">
+                    <div className="flex flex-col gap-2 w-full">
+                      <h3 className="text-sm font-medium text-black/70">
+                        {item.feeling}
+                      </h3>
+                      {/* <h1 className="font-medium text-2xl">{item.score}</h1> */}
+
+                      <div className="w-full bg-white rounded-full h-2.5 mb-4 dark:bg-gray-700">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${item.score}%` }}
+                          transition={{
+                            duration: 1,
+                            type: "spring",
+                            bounce: 0.25,
+                          }}
+                          className=" h-2.5 rounded-full dark:bg-gray-300"
+                          style={{
+                            width: `${item.score}%`,
+                            backgroundColor: `${returnColor(item.feeling)}`,
+                            opacity: 0.9,
+                          }}
+                        ></motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white/50 rounded-3xl p-4 h-full w-full"></div>
+      </div>
+    </div>
+  );
+};
+
+interface SentimentType {
+  feeling: string;
+  score: number;
+}
+
+function feelingUI(item: SentimentType) {
+  if (item.feeling === "Happy") {
+    return <></>;
+  }
+}
+
+function returnIconSentiment(feeling: string) {
+  switch (feeling) {
+    case "Happy":
+      return "ph:smiley-fill";
+    case "Sad":
+      return "ph:smiley-sad-fill";
+    default:
+      "ph:smiley-neutral-fill";
+  }
+}
+
+function returnColor(feeling: string) {
+  if (feeling === "Happy") {
+    return "#3379E3";
+  }
+  if (feeling === "Sad") {
+    return "#AA88F1";
+  }
+  if (feeling === "Angry") {
+    return "#FF9B9B";
+  }
+  if (feeling === "Anxious") {
+    return "#FFD27F";
+  }
+  if (feeling === "Calm") {
+    return "#B7B7B7";
+  }
+  if (feeling === "Stress") {
+    return "#333333";
+  }
+
+  return "yellow";
+}
+
+export default InsightsPage;

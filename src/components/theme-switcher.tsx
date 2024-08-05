@@ -33,7 +33,7 @@ const ThemeSwitcher = () => {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mt-4">Choose a theme</h3>
+      <h3 className="text-md font-semibold mt-4">Choose a theme</h3>
       <div className="flex flex-row gap-4 mt-2">
         {styles.map((style) => (
           <Button
