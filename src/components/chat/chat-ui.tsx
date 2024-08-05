@@ -11,9 +11,10 @@ import Image from "next/image";
 const ChatUI = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [chatHeight, setChatHeight] = useState<number>(0);
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    api: "api/chat",
-  });
+  const { messages, input, handleInputChange, handleSubmit, data, isLoading } =
+    useChat({
+      api: "api/chat",
+    });
   const formRef = useRef<HTMLFormElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -31,7 +32,8 @@ const ChatUI = () => {
     const updateHeight = () => {
       if (chatContainerRef.current) {
         const windowHeight = window.innerHeight;
-        const containerTop = chatContainerRef.current.getBoundingClientRect().top;
+        const containerTop =
+          chatContainerRef.current.getBoundingClientRect().top;
         const newHeight = windowHeight - containerTop;
         setChatHeight(newHeight);
       }
@@ -64,14 +66,17 @@ const ChatUI = () => {
             {message.role === "user" ? (
               <ChatBubble message={message.content} from="user" dir="right" />
             ) : (
-              <ChatBubble
-                message={message.content}
-                from="jana"
-                dir="left"
-              />
+              <ChatBubble message={message.content} from="jana" dir="left" />
             )}
           </div>
         ))}
+        {isLoading && (
+          <div className="ml-4 flex flex-row gap-2">
+            <div className="w-2 h-2 rounded-full bg-black/10 animate-pulse"></div>
+            <div className="w-2 h-2 rounded-full bg-black/10 animate-pulse"></div>
+            <div className="w-2 h-2 rounded-full bg-black/10 animate-pulse"></div>
+          </div>
+        )}
       </ScrollArea>
       <form onSubmit={handleSubmit} className="mt-auto">
         <div

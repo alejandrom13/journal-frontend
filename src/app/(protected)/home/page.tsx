@@ -24,6 +24,7 @@ import AddButton from "@/components/ui/add-button";
 import { AnimatePresence, m, motion } from "framer-motion";
 import HomeSkeletonLoader from "./skeleton";
 import MainLogo from "@/lib/logo";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
 interface Entry {
   id: string;
@@ -36,6 +37,28 @@ const HomePage = () => {
   const [openSummarizer, setSummarizer] = useState(false);
   const [selectedType, setSelectedType] = useState("all");
   const [displayedMonth, setDisplayedMonth] = useState<Date>(new Date());
+
+  const [columnsCount, setColumnsCount] = useState(3);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1000) {
+        setColumnsCount(1); // mobile
+      } else if (window.innerWidth < 1500) {
+        setColumnsCount(2); // tablet
+      } else {
+        setColumnsCount(3); // desktop
+      }
+    };
+
+    // Set the initial value
+    handleResize();
+
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { isLoading, isError, data, isSuccess } = useQuery<Entry[]>({
     queryKey: [queryKey.ALL_ENTRIES, selectedDate],
@@ -75,7 +98,6 @@ const HomePage = () => {
   return (
     <>
       <div className="flex flex-row justify-center">
-
         <div className="">
           <Popover open={popoverOpen}>
             <AnimatePresence>
@@ -218,25 +240,30 @@ const HomePage = () => {
           />
         </div>
       )}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto">
-        {data &&
-          filteredData.map((entry: any, index: any) => {
-            switch (entry.type) {
-              case "note":
-                return <NoteCard key={entry.id} entry={entry} index={index} />;
-              case "calendar":
-                return (
-                  <CalendarCard key={entry.id} entry={entry} index={index} />
-                );
-              case "audio":
-                return <AudioCard key={entry.id} entry={entry} index={index} />;
-              case "spotify":
-              // return <SpotifyCard key={entry.id} content={entry} />;
-              default:
-                return null;
-            }
-          })}
-      </div>
+        <Masonry gutter="20px" columnsCount={columnsCount}>
+          {/* className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto" */}
+          {data &&
+            filteredData.map((entry: any, index: any) => {
+              switch (entry.type) {
+                case "note":
+                  return (
+                    <NoteCard key={entry.id} entry={entry} index={index} />
+                  );
+                case "calendar":
+                  return (
+                    <CalendarCard key={entry.id} entry={entry} index={index} />
+                  );
+                case "audio":
+                  return (
+                    <AudioCard key={entry.id} entry={entry} index={index} />
+                  );
+                case "spotify":
+                // return <SpotifyCard key={entry.id} content={entry} />;
+                default:
+                  return null;
+              }
+            })}
+        </Masonry>
       <div className="h-36" />
       <CommandButton />
       <AddButton />

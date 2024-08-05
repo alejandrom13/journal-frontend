@@ -1,39 +1,35 @@
+"use client";
 import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MinimalTiptapEditor } from "@/components/ui/minimal-tiptap";
 import Editor2 from "@/components/editor/editor2";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEntry } from "@/actions/entries";
+import { updateEntry } from "@/actions/entries";
 import queryKey from "@/lib/queryKeys";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 import DeleteEntryButton from "../delete-entry-button";
+import { toast } from "sonner";
 
-const NoteCard = ({ entry, index }: any) => {
+const NoteCard = ({ entry, index, id }: any) => {
   const [editorValue, setEditorValue] = useState<any>();
-  const [isExpanded, setIsExpanded] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { isError, isPending, isSuccess, mutate } = useMutation({
-    mutationFn: (variables: {
-      type: string;
-      content: any;
-      createdAt: string;
-    }) => createEntry(variables),
-    onSuccess: () => {
-      // Clear the form or show a success message here
+    mutationFn: (variables: { id: string; type: string; content: any }) =>
+      updateEntry(variables),
+    onSuccess: async () => {
+      console.log("Success");
 
-      queryClient.invalidateQueries({
-        queryKey: [queryKey.ALL_ENTRIES],
-      });
+      toast.success("Note updated");
+
+      await queryClient.invalidateQueries({ queryKey: [queryKey.ALL_ENTRIES] });
+
       setIsOpen(false);
-      //scroll to bottom
     },
     onError: (error: any) => {
       console.error("Error", error);
-      // Show an error message to the user here
     },
   });
 
@@ -41,9 +37,9 @@ const NoteCard = ({ entry, index }: any) => {
     if (editorValue) {
       const jsonRes = JSON.parse(editorValue);
       mutate({
+        id: entry?.id,
         type: "note",
         content: jsonRes,
-        createdAt: entry?.createdAt!,
       });
     } else {
       console.warn("No content to submit");
@@ -65,7 +61,8 @@ const NoteCard = ({ entry, index }: any) => {
   return (
     <>
       <motion.div
-        className="h-auto group w-full bg-white/40 p-4 rounded-3xl transition-all ease-in hover:bg-white/60 cursor-pointer"
+        className="min-h-[150px] group w-full bg-white/40 p-4 rounded-3xl transition-all ease-in hover:bg-white/60 cursor-pointer"
+        layout
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -94,7 +91,7 @@ const NoteCard = ({ entry, index }: any) => {
           </div>
         </div>
         <div
-          className="pt-2 pb-1 max-h-[79px] "
+          className="pt-2 pb-1  "
           ref={contentRef}
           style={{
             overflow: "hidden",
@@ -103,7 +100,7 @@ const NoteCard = ({ entry, index }: any) => {
         >
           {editorValue && (
             <MinimalTiptapEditor
-              value={entry?.content!}
+              value={JSON.parse(editorValue!)}
               outputValue="json"
               disableToolbar
               disabled
@@ -160,7 +157,6 @@ const NoteCard = ({ entry, index }: any) => {
                 </div>
               </motion.div>
             </motion.div>
-
           </motion.div>
         )}
       </AnimatePresence>

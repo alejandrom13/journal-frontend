@@ -1,8 +1,11 @@
-import { streamText } from "ai";
+import { streamText, StreamData, convertToCoreMessages } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { promises as fs } from "fs";
 import { getAllEntries } from "@/actions/entries";
 import { formatData } from "@/lib/ai/formatData";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+
+
 
 export async function POST(req: Request, res: Response) {
   try {
@@ -10,32 +13,39 @@ export async function POST(req: Request, res: Response) {
     console.log(trainingData);
 
     const { messages } = await req.json();
-    const openai = createOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+
+    const google = createGoogleGenerativeAI({
+      apiKey: process.env.GEMINI_API_KEY,
     });
+
+    const data = new StreamData();
+
+    data.append(trainingData);
 
     const result = await streamText({
-      model: openai("gpt-3.5-turbo"),
-
+      model: google("models/gemini-1.5-pro-latest"),
+      onFinish() {
+        console.log("Finished");
+        data.close();
+      },
       system: `
-    Be an assistant to answer all the questions about the user, and provide the user with the information they need. like a time machine. be friendly.
+              Be an assistant to answer all the questions about the user, 
+        and provide the user with the information they need. like a time machine. 
+        be friendly, provide audio transcript if any, (don't show url).
 
-    ${trainingData}
+        ${formatData(trainingData)}
       `,
-      messages: messages.map((message: any) => ({
-        role: message.role,
-        content: message.content,
-      })),
+      messages: convertToCoreMessages(messages),
     });
 
-    return result.toAIStreamResponse();
+    // Respond with the stream and additional StreamData
+    return result.toDataStreamResponse();
   } catch (error) {
     return new Response("Error: " + error, { status: 500 });
   }
 }
-
 async function getTrainingData() {
   const res = await getAllEntries(new Date());
-  console.log(res);
-  return formatData(res);
+
+  return res;
 }

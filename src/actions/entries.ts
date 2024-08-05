@@ -62,6 +62,40 @@ const createEntry = async ({
   }
 };
 
+const updateEntry = async ({
+  id,
+  type,
+  content,
+}: {
+  id: string;
+  type: string;
+  content: any;
+}) => {
+  try {
+    const apiUrl = process.env.API_URL;
+
+    console.log("id", id);
+
+    const response = await fetch(apiUrl + "/entry/" + id, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookies().toString(),
+      },
+      body: JSON.stringify({
+        type: type,
+        content: content,
+      }),
+    });
+    console.log(response);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+    return error;
+  }
+};
+
 const deleteEntry = async (id: string) => {
   try {
     const apiUrl = process.env.API_URL;
@@ -79,4 +113,4 @@ const deleteEntry = async (id: string) => {
     return error;
   }
 };
-export { getAllEntries, createEntry, deleteEntry };
+export { getAllEntries, createEntry, deleteEntry, updateEntry };
