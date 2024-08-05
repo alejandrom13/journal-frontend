@@ -69,6 +69,7 @@
     "react-dom": "^18",
     "react-responsive-masonry": "^2.3.0",
     "react-speech-recognition": "^3.10.0",
+    "recharts": "^2.12.7",
     "regenerator-runtime": "^0.14.1",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.4.0",

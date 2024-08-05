@@ -8,7 +8,7 @@ interface TotalCardProps {
 
 const TotalCard = ({ title, value, icon, color, iconSize}: TotalCardProps) => {
   return (
-    <div className="bg-white/50 rounded-2xl p-4">
+    <div className="bg-white/50 rounded-2xl p-4 w-full">
       <div className="flex flex-row">
         <div className="flex flex-col gap-2">
           <h3 className="text-sm font-medium text-black/70">{title}</h3>

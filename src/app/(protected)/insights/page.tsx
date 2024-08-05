@@ -20,6 +20,37 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import {
+  Bar,
+  BarChart,
+  PolarAngleAxis,
+  PolarGrid,
+  Radar,
+  RadarChart,
+  XAxis,
+} from "recharts";
+
+const chartData = [
+  { feeling: "Happy", score: 10 },
+  { feeling: "Sad", score: 20 },
+  { feeling: "Angry", score: 30 },
+  { feeling: "Anxious", score: 70 },
+  { feeling: "Calm", score: 10 },
+  { feeling: "Stress", score: 90 },
+];
+
+const chartConfig = {
+  score: {
+    label: "Score",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
 
 const uniqueTypes = [
   {
@@ -78,7 +109,7 @@ const InsightsPage = () => {
     <div className=" h-full">
       {isError && <div>error</div>}
 
-      <div className="flex flex-row py-4 gap-2 items-end justify-end">
+      <div className="flex flex-row py-4 gap-2 justify-center lg:justify-start">
         <AnimatePresence initial={false}>
           {uniqueTypes.map((type) => (
             <motion.div
@@ -140,7 +171,7 @@ const InsightsPage = () => {
       )}
 
       {data?.length! > 0 && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="flex flex-col lg:flex-row gap-4 w-full">
           <TotalCard
             title="Notes"
             value={data?.filter((item) => item.type === "note").length || 0}
@@ -199,7 +230,7 @@ const InsightsPage = () => {
         <div className="w-full h-10 bg-white/50 animate-pulse mt-4"></div>
       )}
 
-      <div className="flex flex-row w-full h-full max-h-[500px] gap-4 mt-4 ">
+      <div className="flex flex-col xl:flex-row w-full gap-4 mt-4 ">
         <div className="bg-white/50 rounded-3xl p-4 flex flex-col gap-4 w-full">
           <div className="w-full p-3 flex flex-row bg-white rounded-2xl gap-2 items-center">
             <Icon
@@ -208,7 +239,9 @@ const InsightsPage = () => {
               height="24"
               className="text-primary"
             />
-            <h2 className="text-lg font-medium text-primary">Sentiment Analysis</h2>
+            <h2 className="text-lg font-medium text-primary">
+              Sentiment Analysis
+            </h2>
             <div className="ml-auto">
               <TooltipProvider>
                 <Tooltip delayDuration={300}>
@@ -225,8 +258,9 @@ const InsightsPage = () => {
                     <p>
                       Sentiment analysis classifies your journal entries into
                       <br />
-                      categories with scores from <strong>0</strong> (not present) to <strong>100 </strong>
-                       (strongly present).
+                      categories with scores from <strong>0</strong> (not
+                      present) to <strong>100 </strong>
+                      (strongly present).
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -269,7 +303,27 @@ const InsightsPage = () => {
           )}
         </div>
 
-        <div className="bg-white/50 rounded-3xl p-4 h-full w-full"></div>
+        <div className="bg-white/50 rounded-3xl h-full w-full flex items-center">
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square min-h-[200px] max-h-[500px] w-full"
+          >
+            <RadarChart data={sentiment}>
+              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+              <PolarAngleAxis dataKey="feeling" />
+              <PolarGrid />
+              <Radar
+                dataKey="score"
+                fill="var(--color-score)"
+                fillOpacity={0.6}
+                dot={{
+                  r: 4,
+                  fillOpacity: 1,
+                }}
+              />
+            </RadarChart>
+          </ChartContainer>
+        </div>
       </div>
     </div>
   );
