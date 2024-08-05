@@ -30,15 +30,42 @@ interface Entry {
   id: string;
   type: string;
   content: {};
+  createdAt: string;
+  updatedAt: string;
 }
 
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
+  const [today, setToday] = useState(new Date());
   const [openSummarizer, setSummarizer] = useState(false);
   const [selectedType, setSelectedType] = useState("all");
   const [displayedMonth, setDisplayedMonth] = useState<Date>(new Date());
 
+  const { isLoading, isError, data, isSuccess } = useQuery<Entry[]>({
+    queryKey: [queryKey.ALL_ENTRIES, selectedDate],
+    queryFn: () => getAllEntries(selectedDate),
+    enabled: !!selectedDate,
+    retry: 1,
+  });
+
+  const uniqueTypes = useMemo(() => {
+    if (!data) return ["all"];
+    const types = [...new Set(data.map((item) => item.type))];
+    return ["all", ...Array.from(types)];
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    if (selectedType === "all") {
+      return data;
+    }
+    return data.filter((item) => item.type === selectedType);
+  }, [data, selectedType]);
+
+
+
   const [columnsCount, setColumnsCount] = useState(3);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1000) {
@@ -60,35 +87,11 @@ const HomePage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const { isLoading, isError, data, isSuccess } = useQuery<Entry[]>({
-    queryKey: [queryKey.ALL_ENTRIES, selectedDate],
-    queryFn: () => getAllEntries(selectedDate),
-    enabled: !!selectedDate,
-    retry: 1,
-  });
 
-  // Extract unique types
-  const uniqueTypes = useMemo(() => {
-    if (!data) return ["all"];
-    const types = [...new Set(data.map((item) => item.type))];
-    return ["all", ...Array.from(types)];
-  }, [data]);
+
 
   const handleFilterChange = (type: string) => {
     setSelectedType(type);
-  };
-
-  // Filter data based on selected type
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    if (selectedType === "all") {
-      return data;
-    }
-    return data.filter((item) => item.type === selectedType);
-  }, [data, selectedType]);
-
-  const handleSelectDay = (date: Date) => {
-    // Implement this function as needed
   };
   {
     isError && <div>Error</div>;
@@ -133,6 +136,7 @@ const HomePage = () => {
                 }}
                 selected={selectedDate}
                 onSelect={(date) => {
+                  console.log("Dayt Picker ", date);
                   setSelectedDate(date || new Date());
                   setPopoverOpen(false);
                 }}
@@ -163,9 +167,12 @@ const HomePage = () => {
                   <Button
                     className="ml-2 rounded-full border border-primary/20 bg-transparent font-semibold text-md text-primary hover:text-primary"
                     onClick={() => {
-                      const newDate = new Date();
-                      setSelectedDate(newDate);
-                      setDisplayedMonth(newDate);
+                      // Get the current date in the user's local timezone
+                      const localDate = new Date();
+
+                      // Set the selected date and displayed month as a Date object
+                      setSelectedDate(localDate);
+                      setDisplayedMonth(localDate);
                       setSummarizer(false);
                     }}
                     variant={"outline"}
@@ -180,7 +187,6 @@ const HomePage = () => {
       <MonthCarousel
         initialDate={selectedDate}
         onChange={(newDate) => {
-          console.log("NEW DATE:", newDate);
           setSelectedDate(newDate);
           setSummarizer(false);
         }}
@@ -240,30 +246,33 @@ const HomePage = () => {
           />
         </div>
       )}
-        <Masonry gutter="20px" columnsCount={columnsCount}>
-          {/* className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto" */}
-          {data &&
-            filteredData.map((entry: any, index: any) => {
-              switch (entry.type) {
-                case "note":
-                  return (
-                    <NoteCard key={entry.id} entry={entry} index={index} id={entry.id} />
-                  );
-                case "calendar":
-                  return (
-                    <CalendarCard key={entry.id} entry={entry} index={index} />
-                  );
-                case "audio":
-                  return (
-                    <AudioCard key={entry.id} entry={entry} index={index} />
-                  );
-                case "spotify":
-                // return <SpotifyCard key={entry.id} content={entry} />;
-                default:
-                  return null;
-              }
-            })}
-        </Masonry>
+      <Masonry gutter="20px" columnsCount={columnsCount}>
+        {/* className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto" */}
+        {data &&
+          filteredData.map((entry: any, index: any) => {
+            switch (entry.type) {
+              case "note":
+                return (
+                  <NoteCard
+                    key={entry.id}
+                    entry={entry}
+                    index={index}
+                    id={entry.id}
+                  />
+                );
+              case "calendar":
+                return (
+                  <CalendarCard key={entry.id} entry={entry} index={index} />
+                );
+              case "audio":
+                return <AudioCard key={entry.id} entry={entry} index={index} />;
+              case "spotify":
+              // return <SpotifyCard key={entry.id} content={entry} />;
+              default:
+                return null;
+            }
+          })}
+      </Masonry>
       <div className="h-36" />
       <CommandButton />
       <AddButton />

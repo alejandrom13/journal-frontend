@@ -221,7 +221,6 @@ const AudioRecorder: React.FC = () => {
                   formData.append("type", "audio");
                   formData.append("userId", user?.id!);
 
-                  console.log(formData);
 
                   await saveRecording(formData, selectedDate).then(() => {
                     setIsUploading(false);

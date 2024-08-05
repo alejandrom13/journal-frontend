@@ -15,13 +15,11 @@ async function getAllEntries(date: Date) {
     });
 
     if (!response.ok) {
-      console.log(response);
       throw new Error(response.statusText);
     }
 
     const data = await response.json();
-    console.log(data);
-    console.log(data);
+ 
 
     return data;
   } catch (error) {

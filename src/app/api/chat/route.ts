@@ -10,7 +10,6 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 export async function POST(req: Request, res: Response) {
   try {
     const trainingData = await getTrainingData();
-    console.log(trainingData);
 
     const { messages } = await req.json();
 
@@ -25,7 +24,6 @@ export async function POST(req: Request, res: Response) {
     const result = await streamText({
       model: google("models/gemini-1.5-pro-latest"),
       onFinish() {
-        console.log("Finished");
         data.close();
       },
       system: `

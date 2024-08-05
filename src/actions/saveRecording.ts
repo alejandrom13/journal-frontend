@@ -9,7 +9,6 @@ export const saveRecording = async (
   formData: FormData,
   date: Date
 ): Promise<void> => {
-  console.log("formData", formData.get("file"));
 
   const adminEmail = process.env.POCKETBASE_ADMIN_EMAIL as string;
   const adminPassword = process.env.POCKETBASE_ADMIN_PASS as string;
@@ -32,7 +31,6 @@ export const saveRecording = async (
     createdAt: date.toISOString(),
   });
 
-  console.log("res", res);
 };
 
 function extractApiPath(url: string): string {

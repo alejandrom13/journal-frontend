@@ -10,9 +10,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useKeystrokeState } from "@/app/states/keyStrokeState";
 
 const CommandButton = () => {
   const [activeButton, setActiveButton] = useState<string | null>(null);
+  const { enableKeyStroke } = useKeystrokeState();
 
   const buttons = [
     { icon: Pen, key: "editor", label: "Editor", shortcut: "N" },
@@ -22,6 +24,7 @@ const CommandButton = () => {
   ];
 
   useEffect(() => {
+    if (!enableKeyStroke) return;
     const handleKeyPress = (event: KeyboardEvent) => {
       switch (event.key) {
         case "n":
@@ -46,7 +49,7 @@ const CommandButton = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [activeButton]);
+  }, [activeButton, enableKeyStroke]);
   return (
     <div className=" fixed bottom-0 left-[60%] -translate-x-1/2 mb-10 bg-white/50 backdrop-blur-lg rounded-[45px] p-3   flex-col justify-end hidden sm:block">
       <AnimatePresence>
