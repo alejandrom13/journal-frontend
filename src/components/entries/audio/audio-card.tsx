@@ -64,7 +64,7 @@ const AudioCard = ({ entry, index }: any) => {
           </svg>
         </div>
         <div className="text-sm font-semibold text-primary pl-2">
-          Voice Note
+          Audio
         </div>
         <div className="ml-2 bg-primary/10 rounded-full p-1 text-sm px-4 text-primary">
           {isPlaying

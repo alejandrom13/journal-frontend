@@ -53,7 +53,7 @@ const AddButton = () => {
                 {[
                   {
                     icon: <AudioLinesIcon size={20} />,
-                    name: "Voice Note",
+                    name: "Audio",
                     onClick: () => {},
                   },
                   {

@@ -36,14 +36,6 @@ import {
   XAxis,
 } from "recharts";
 
-const chartData = [
-  { feeling: "Happy", score: 10 },
-  { feeling: "Sad", score: 20 },
-  { feeling: "Angry", score: 30 },
-  { feeling: "Anxious", score: 70 },
-  { feeling: "Calm", score: 10 },
-  { feeling: "Stress", score: 90 },
-];
 
 const chartConfig = {
   score: {
@@ -210,7 +202,7 @@ const InsightsPage = () => {
           />
 
           <TotalCard
-            title="Voice Notes"
+            title="Audio"
             value={data?.filter((item) => item.type === "audio").length || 0}
             iconSize=""
             icon={
