@@ -11,6 +11,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useKeystrokeState } from "@/app/states/keyStrokeState";
+import CreateCalendarEntry from "../entries/calendar/create-calendar";
+import MenuEntry from "../entries/menu/menu-entry";
 
 const CommandButton = () => {
   const [activeButton, setActiveButton] = useState<string | null>(null);
@@ -19,7 +21,7 @@ const CommandButton = () => {
   const buttons = [
     { icon: Pen, key: "editor", label: "Editor", shortcut: "N" },
     { icon: AudioLinesIcon, key: "audio", label: "Audio", shortcut: "A" },
-    // { icon: Calendar, key: "calendar" },
+    // { icon: Calendar, key: "calendar", label: "Calendar", shortcut: "C" },
     { icon: Menu, key: "menu", label: "Menu", shortcut: "M" },
   ];
 
@@ -38,6 +40,13 @@ const CommandButton = () => {
             ? setActiveButton(activeButton)
             : setActiveButton("audio");
           break;
+
+          case "M":
+            case "m":
+              activeButton !== null
+                ? setActiveButton(activeButton)
+                : setActiveButton("menu");
+              break; 
         case "Escape":
           setActiveButton(null);
           break;
@@ -55,6 +64,7 @@ const CommandButton = () => {
       <AnimatePresence>
         {activeButton === "editor" && <CreateNote key="editor" />}
         {activeButton === "audio" && <AudioRecorder />}
+        {activeButton === "menu" && <MenuEntry />}
       </AnimatePresence>
 
       <div className="flex flex-row justify-center items-center gap-3 ">
