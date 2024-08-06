@@ -10,6 +10,7 @@ import {
 import CalendarIntegrationButton from "@/integrations/google-calendar/integration";
 import { useQuery } from "@tanstack/react-query";
 import { getAllIntegrations } from "@/actions/integrations";
+import HomeSkeletonLoader from "@/app/(protected)/home/skeleton";
 
 const IntegrationsGrid = () => {
   const { data, isLoading, isError } = useQuery({
@@ -18,7 +19,10 @@ const IntegrationsGrid = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+
+      <HomeSkeletonLoader />
+    );
   }
 
   const integrations = [

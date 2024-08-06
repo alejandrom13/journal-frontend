@@ -33,9 +33,6 @@ const NoteCard = ({ entry, index, id }: any) => {
     }
   }, [entry?.content]);
 
-  useEffect(() => {
-    console.log("Editor value:", editorValue);
-  }, [editorValue]);
 
   return (
     <>
@@ -70,7 +67,7 @@ const NoteCard = ({ entry, index, id }: any) => {
           </div>
         </div>
         <div
-          className="pt-2 pb-1  "
+          className="pt-2 pb-1 "
           ref={contentRef}
           style={{
             overflow: "hidden",

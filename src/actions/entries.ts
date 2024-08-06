@@ -34,7 +34,6 @@ async function getAllEntriesByRange({ from, to }: { from: Date; to: Date }) {
     const fromDate = from.toISOString().split("T")[0];
     const toDate = to.toISOString().split("T")[0];
 
-    console.log(fromDate, toDate);
 
     const response = await fetch(apiUrl + `/entry/all/${fromDate}/${toDate}`, {
       headers: {
@@ -47,7 +46,6 @@ async function getAllEntriesByRange({ from, to }: { from: Date; to: Date }) {
     }
 
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Error:", error);

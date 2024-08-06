@@ -27,6 +27,8 @@ export async function POST(req: Request, res: Response) {
       })
       .join("\n\n");
 
+      console.log("formattedData", formattedData);
+
     const result = await streamText({
       model: google("models/gemini-1.5-pro-latest"),
 
@@ -35,40 +37,17 @@ export async function POST(req: Request, res: Response) {
     
         1. Provide accurate information based on the user's journal entries.
         2. Act as a "time machine," allowing the user to explore past events and thoughts.
-        3. Be friendly and supportive in your interactions.
         4. Include audio transcripts when available, but do not display URLs.
         5. Only share information that is directly relevant to the user's query.
         6. Respect the user's privacy and maintain confidentiality.
         7. Provide helpful suggestions and resources when appropriate.
         8. Provide the user with information of the day
-
+      ${formattedData}
 
         today's date is ${from}
         Remember to be concise yet thorough, and always prioritize the user's needs and well-being.
       `,
-      tools: {
-        journalEntries: tool({
-          description: "Get journal entries in a given date range",
-          parameters: z.object({
-            from: z.string(),
-            to: z.string(),
-          }),
-          execute: async ({ from, to }) => {
-            console.log("getting data from AI" + from + to);
-            const res = await getTrainingData({ from, to });
-            const formattedData = res
-            .map((entry: any) => {
-              if (typeof entry.content === "object") {
-                return JSON.stringify(entry.content);
-              }
-              return entry.content.toString();
-            })
-            .join("\n\n");
 
-            return formattedData;
-          },
-        }),
-      },
       messages: convertToCoreMessages(messages),
     });
 

@@ -20,6 +20,8 @@ interface UpdateEntryVariables {
 const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
   const queryClient = useQueryClient();
   const [editorValue, setEditorValue] = useState<any>();
+  const [updated, setUpdated] = useState(false);
+  const { selectedDate } = useDateStore();
 
   const { isError, isPending, isSuccess, mutate, data } = useMutation({
     mutationKey: ["updateEntry", entry?.id],
@@ -33,15 +35,12 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
     onSuccess: () => {
       setIsOpen(false);
       toast.success("Note updated");
-      console.log("");
       queryClient.resetQueries({
         queryKey: [queryKey.ALL_ENTRIES],
       });
-      // queryClient.invalidateQueries({
-      //   queryKey: [queryKey.ALL_ENTRIES],
-      // });
-
-      console.log("passed invalidation");
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.ALL_ENTRIES, selectedDate],
+      });
     },
     onError: (error: any) => {
       console.error("Error", error);

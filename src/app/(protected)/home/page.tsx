@@ -40,24 +40,18 @@ const HomePage = () => {
     retry: 1,
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      console.log("Data coming from the ", data);
-    }
-  }, []);
-
   const filteredData = useMemo(() => {
-    // if (!data) return [];
+    if (!data) return [];
     if (selectedType === "all") {
       return data;
     }
-    return data?.filter((item) => item.type === selectedType);
+    return data.filter((item) => item.type === selectedType);
   }, [data, selectedType]);
 
   const uniqueTypes = useMemo(() => {
     if (!data) return ["all"];
     const types = [...new Set(data.map((item) => item.type))];
-    return ["all", ...Array.from(types)];
+    return ["all", ...types];
   }, [data]);
 
   const [columnsCount, setColumnsCount] = useState(3);
@@ -240,30 +234,29 @@ const HomePage = () => {
       )}
       <Masonry gutter="20px" columnsCount={columnsCount}>
         {/* className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto" */}
-        {filteredData &&
-          filteredData?.map((entry: any, index: any) => {
-            switch (entry.type) {
-              case "note":
-                return (
-                  <NoteCard
-                    key={entry.id}
-                    entry={entry}
-                    index={index}
-                    id={entry.id}
-                  />
-                );
-              case "calendar":
-                return (
-                  <CalendarCard key={entry.id} entry={entry} index={index} />
-                );
-              case "audio":
-                return <AudioCard key={entry.id} entry={entry} index={index} />;
-              case "spotify":
-              // return <SpotifyCard key={entry.id} content={entry} />;
-              default:
-                return null;
-            }
-          })}
+        {filteredData?.map((entry: any, index: any) => {
+          switch (entry.type) {
+            case "note":
+              return (
+                <NoteCard
+                  key={entry.id}
+                  entry={entry}
+                  index={index}
+                  id={entry.id}
+                />
+              );
+            case "calendar":
+              return (
+                <CalendarCard key={entry.id} entry={entry} index={index} />
+              );
+            case "audio":
+              return <AudioCard key={entry.id} entry={entry} index={index} />;
+            case "spotify":
+            // return <SpotifyCard key={entry.id} content={entry} />;
+            default:
+              return null;
+          }
+        })}
       </Masonry>
       <div className="h-36" />
       <CommandButton />

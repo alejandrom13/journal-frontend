@@ -6,6 +6,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { z } from "zod";
 import { SentimentSchema } from "@/lib/sentimentSchema";
 import { formatData, processArray } from "@/lib/ai/formatData";
+import { measureMemory } from "vm";
 
 const generateSummary = async (data: any) => {
   // const openai = createOpenAI({
@@ -55,8 +56,6 @@ const generateSentimentAnalysis = async (data: any) => {
     (item: any) => item.type !== "calendar"
   );
 
-  console.log("Data without calendar", dataWithoutCalendar);
-
   const formattedData = dataWithoutCalendar
     .map((entry: any) => {
       if (typeof entry.content === "object") {
@@ -65,8 +64,6 @@ const generateSentimentAnalysis = async (data: any) => {
       return entry.content.toString();
     })
     .join("\n\n");
-
-  console.log("Formatted Data", formattedData);
 
   const { object } = await generateObject({
     model: google("models/gemini-1.5-pro-latest"),
@@ -89,8 +86,31 @@ Return the results as a JSON object with an array of sentiments, each containing
     }),
   });
 
-  console.log("Sentiment Analysis", object.object.sentiment);
   return object.object.sentiment;
 };
 
-export { generateSummary, generateSentimentAnalysis };
+const generateCustomQuestions = async (message: any) => {
+  console.log("message", message);
+  const google = createGoogleGenerativeAI({
+    // custom settings, e.g.
+    apiKey: process.env.GEMINI_API_KEY,
+  });
+
+  const { object } = await generateObject({
+    model: google("models/gemini-1.5-pro-latest"),
+    prompt: `Generate between 1-3 custom and relevant questions that the user can ask about their journal. 
+    The questions should be simple, related to the user's daily reflections, and encourage further journaling. All questions in first person. 
+    Make sure the questions are concise and directly relevant to the user's journal entries.`,
+    schema: z.object({
+      object: z.object({
+        questions: z.array(z.string()),
+      }),
+    }),
+  });
+
+  console.log(object.object.questions);
+
+  return object.object.questions;
+};
+
+export { generateSummary, generateSentimentAnalysis, generateCustomQuestions };
