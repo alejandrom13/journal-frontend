@@ -115,7 +115,7 @@ const ChatUI = () => {
             <div className="flex flex-col">
               <h3 className="text-lg font-medium text-primary">Jana</h3>
               <p className="text-md text-primary">
-                I can help with today's journal entries. Ask me anything!{" "}
+                I can help with today&quot;s journal entries. Ask me anything!{" "}
               </p>
             </div>
           </div>
