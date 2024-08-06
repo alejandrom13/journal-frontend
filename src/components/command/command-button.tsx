@@ -19,8 +19,8 @@ const CommandButton = () => {
   const { enableKeyStroke } = useKeystrokeState();
 
   const buttons = [
-    { icon: Pen, key: "editor", label: "Editor", shortcut: "N" },
-    { icon: AudioLinesIcon, key: "audio", label: "Audio", shortcut: "A" },
+    { icon: Pen, key: "editor", label: "New Note", shortcut: "N" },
+    { icon: AudioLinesIcon, key: "audio", label: "New Audio", shortcut: "A" },
     // { icon: Calendar, key: "calendar", label: "Calendar", shortcut: "C" },
     { icon: Menu, key: "menu", label: "Menu", shortcut: "M" },
   ];
