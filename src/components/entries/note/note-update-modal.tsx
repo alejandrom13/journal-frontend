@@ -34,12 +34,12 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
       setIsOpen(false);
       toast.success("Note updated");
       console.log("");
-      // queryClient.resetQueries({
-      //   queryKey: [queryKey.ALL_ENTRIES],
-      // });
-      queryClient.invalidateQueries({
+      queryClient.resetQueries({
         queryKey: [queryKey.ALL_ENTRIES],
       });
+      // queryClient.invalidateQueries({
+      //   queryKey: [queryKey.ALL_ENTRIES],
+      // });
 
       console.log("passed invalidation");
     },
