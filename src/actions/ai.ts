@@ -25,9 +25,20 @@ const generateSummary = async (data: any) => {
 
   const { text } = await generateText({
     model: google("models/gemini-pro"),
-    prompt:
-      "(Use markdown, and well structured text with bold) Summarize me what i did this day: \n" +
-      data,
+    prompt: `
+    Generate a well-structured summary of the day's activities using markdown format. Follow these guidelines:
+    
+    1. Start with a brief overall summary in bold.
+    2. Break down the activities into categories (e.g., work, personal, health).
+    3. Use bullet points for individual activities.
+    4. Include a separate section for audio summaries, if any.
+    5. End with a short reflection or key takeaway from the day.
+    
+    Here's the data to summarize:
+    
+    ${data}
+    
+    Please ensure the response is concise, informative, and easy to read.`,
   });
 
   return text;
@@ -38,7 +49,6 @@ const generateSentimentAnalysis = async (data: any) => {
     // custom settings, e.g.
     apiKey: process.env.GEMINI_API_KEY,
   });
-
 
   //data without calendar type
   const dataWithoutCalendar = data.filter(
@@ -56,8 +66,7 @@ const generateSentimentAnalysis = async (data: any) => {
     })
     .join("\n\n");
 
-    console.log("Formatted Data", formattedData);
-
+  console.log("Formatted Data", formattedData);
 
   const { object } = await generateObject({
     model: google("models/gemini-1.5-pro-latest"),

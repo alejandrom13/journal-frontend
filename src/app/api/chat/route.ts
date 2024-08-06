@@ -1,38 +1,74 @@
-import { streamText, StreamData, convertToCoreMessages } from "ai";
+import { streamText, StreamData, convertToCoreMessages, tool } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { promises as fs } from "fs";
-import { getAllEntries } from "@/actions/entries";
+import { getAllEntries, getAllEntriesByRange } from "@/actions/entries";
 import { formatData } from "@/lib/ai/formatData";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-
-
+import { z } from "zod";
 
 export async function POST(req: Request, res: Response) {
   try {
-    const trainingData = await getTrainingData();
-
-    const { messages } = await req.json();
+    const { messages, from, to } = await req.json();
+    const trainingData = await getTrainingData({
+      from: from,
+      to: to,
+    });
 
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
     });
 
-    const data = new StreamData();
-
-    data.append(trainingData);
+    const formattedData = trainingData
+      .map((entry: any) => {
+        if (typeof entry.content === "object") {
+          return JSON.stringify(entry.content);
+        }
+        return entry.content.toString();
+      })
+      .join("\n\n");
 
     const result = await streamText({
       model: google("models/gemini-1.5-pro-latest"),
-      onFinish() {
-        data.close();
-      },
-      system: `
-              Be an assistant to answer all the questions about the user, 
-        and provide the user with the information they need. like a time machine. 
-        be friendly, provide audio transcript if any, (don't show url).
 
-        ${formatData(trainingData)}
+      system: `
+        You are a helpful assistant designed to answer questions about the user's journal. Your role is to:
+    
+        1. Provide accurate information based on the user's journal entries.
+        2. Act as a "time machine," allowing the user to explore past events and thoughts.
+        3. Be friendly and supportive in your interactions.
+        4. Include audio transcripts when available, but do not display URLs.
+        5. Only share information that is directly relevant to the user's query.
+        6. Respect the user's privacy and maintain confidentiality.
+        7. Provide helpful suggestions and resources when appropriate.
+        8. Provide the user with information of the day
+
+
+        today's date is ${from}
+        Remember to be concise yet thorough, and always prioritize the user's needs and well-being.
       `,
+      tools: {
+        journalEntries: tool({
+          description: "Get journal entries in a given date range",
+          parameters: z.object({
+            from: z.string(),
+            to: z.string(),
+          }),
+          execute: async ({ from, to }) => {
+            console.log("getting data from AI" + from + to);
+            const res = await getTrainingData({ from, to });
+            const formattedData = res
+            .map((entry: any) => {
+              if (typeof entry.content === "object") {
+                return JSON.stringify(entry.content);
+              }
+              return entry.content.toString();
+            })
+            .join("\n\n");
+
+            return formattedData;
+          },
+        }),
+      },
       messages: convertToCoreMessages(messages),
     });
 
@@ -42,8 +78,13 @@ export async function POST(req: Request, res: Response) {
     return new Response("Error: " + error, { status: 500 });
   }
 }
-async function getTrainingData() {
-  const res = await getAllEntries(new Date());
+async function getTrainingData({ from, to }: { from: string; to: string }) {
+  const newFrom = new Date(from);
+  const newTo = new Date(to);
+  const res = await getAllEntriesByRange({
+    from: newFrom,
+    to: newTo,
+  });
 
   return res;
 }

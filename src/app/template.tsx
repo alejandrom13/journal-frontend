@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
 import { useThemeStore } from "./states/themeState";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // Create a theme context
 const ThemeContext = createContext<{
@@ -30,10 +31,12 @@ const HomeTemplate = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isLoaded, user, changeTheme]);
 
-
   return (
     <>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        {children}
+        <ReactQueryDevtools initialIsOpen={true} />
+      </QueryClientProvider>
     </>
   );
 };

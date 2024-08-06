@@ -11,32 +11,37 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface UpdateEntryVariables {
-    id: string;
-    type: string;
-    content: any;
-    createdAt: string;
-  }
-  
+  id: string;
+  type: string;
+  content: any;
+  updatedAt: string;
+}
+
 const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
   const queryClient = useQueryClient();
   const [editorValue, setEditorValue] = useState<any>();
 
   const { isError, isPending, isSuccess, mutate, data } = useMutation({
-    mutationFn: (variables: {
-      id: string;
-      type: string;
-      content: any;
-      createdAt: string;
-    }) => updateEntry(variables),
+    mutationKey: ["updateEntry", entry?.id],
+    mutationFn: ({ id, type, content, updatedAt }: UpdateEntryVariables) =>
+      updateEntry({
+        id,
+        type,
+        content,
+        updatedAt,
+      }),
     onSuccess: () => {
-      toast.success("Note updated");
-
-      const res = queryClient.invalidateQueries({
-        queryKey: [queryKey.ALL_ENTRIES, "all"],
-      });
-      console.log("editor valuesssd ", editorValue);
-      setValue(editorValue);
       setIsOpen(false);
+      toast.success("Note updated");
+      console.log("");
+      // queryClient.resetQueries({
+      //   queryKey: [queryKey.ALL_ENTRIES],
+      // });
+      queryClient.invalidateQueries({
+        queryKey: [queryKey.ALL_ENTRIES],
+      });
+
+      console.log("passed invalidation");
     },
     onError: (error: any) => {
       console.error("Error", error);
@@ -57,7 +62,7 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
         id: entry?.id,
         type: "note",
         content: jsonRes,
-        createdAt: entry?.createdAt,
+        updatedAt: entry?.createdAt,
       });
     } else {
       console.warn("No content to submit");

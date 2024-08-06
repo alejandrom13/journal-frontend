@@ -26,7 +26,6 @@ const NoteCard = ({ entry, index, id }: any) => {
   }, [isOpen, setEnableKeyStroke]);
 
   useEffect(() => {
-    console.log("Entry content:", entry?.content);
 
     if (entry?.content) {
       const s = JSON.stringify(entry?.content);

@@ -8,7 +8,12 @@ interface DateState {
 export const useDateStore = create<DateState>((set) => ({
   selectedDate: (() => {
     const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    now.setHours(0, 0, 0, 0); // Set to start of day in user's local time
+    return now;
   })(),
-  setSelectedDate: (date: Date) => set({ selectedDate: date }),
+  setSelectedDate: (date: Date) => {
+    const adjustedDate = new Date(date);
+    adjustedDate.setHours(0, 0, 0, 0); // Ensure any set date is also at start of day
+    set({ selectedDate: adjustedDate });
+  },
 }));

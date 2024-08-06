@@ -23,17 +23,14 @@ const CreateNote = () => {
       createdAt: string;
     }) => createEntry(variables),
     onSuccess: () => {
-      // Clear the form or show a success message here
       setEditorValue(undefined);
       queryClient.invalidateQueries({
         queryKey: [queryKey.ALL_ENTRIES],
       });
       simulateKeyPress("Escape");
-      //scroll to bottom
     },
     onError: (error: any) => {
       console.error("Error", error);
-      // Show an error message to the user here
     },
   });
 

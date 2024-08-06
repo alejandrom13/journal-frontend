@@ -7,13 +7,20 @@ import { useChat } from "ai/react";
 import ChatBubble from "./chat-bubble";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { useDateStore } from "@/app/states/calendarState";
 
 const ChatUI = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [chatHeight, setChatHeight] = useState<number>(0);
+
+  const { selectedDate} = useDateStore();
   const { messages, input, handleInputChange, handleSubmit, data, isLoading } =
     useChat({
       api: "api/chat",
+      body: {
+        from: selectedDate,
+        to: selectedDate,
+      }
     });
   const formRef = useRef<HTMLFormElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);

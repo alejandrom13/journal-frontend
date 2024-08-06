@@ -27,11 +27,8 @@ import MainLogo from "@/lib/logo";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { Entry } from "@/lib/entryType";
 
-
-
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
-  const [today, setToday] = useState(new Date());
   const [openSummarizer, setSummarizer] = useState(false);
   const [selectedType, setSelectedType] = useState("all");
   const [displayedMonth, setDisplayedMonth] = useState<Date>(new Date());
@@ -43,21 +40,25 @@ const HomePage = () => {
     retry: 1,
   });
 
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("Data coming from the ", data);
+    }
+  }, []);
+
+  const filteredData = useMemo(() => {
+    // if (!data) return [];
+    if (selectedType === "all") {
+      return data;
+    }
+    return data?.filter((item) => item.type === selectedType);
+  }, [data, selectedType]);
+
   const uniqueTypes = useMemo(() => {
     if (!data) return ["all"];
     const types = [...new Set(data.map((item) => item.type))];
     return ["all", ...Array.from(types)];
   }, [data]);
-
-  const filteredData = useMemo(() => {
-    if (!data) return [];
-    if (selectedType === "all") {
-      return data;
-    }
-    return data.filter((item) => item.type === selectedType);
-  }, [data, selectedType]);
-
-
 
   const [columnsCount, setColumnsCount] = useState(3);
 
@@ -81,9 +82,6 @@ const HomePage = () => {
     // Cleanup
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-
-
 
   const handleFilterChange = (type: string) => {
     setSelectedType(type);
@@ -131,7 +129,6 @@ const HomePage = () => {
                 }}
                 selected={selectedDate}
                 onSelect={(date) => {
-                  console.log("Dayt Picker ", date);
                   setSelectedDate(date || new Date());
                   setPopoverOpen(false);
                 }}
@@ -243,8 +240,8 @@ const HomePage = () => {
       )}
       <Masonry gutter="20px" columnsCount={columnsCount}>
         {/* className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto" */}
-        {data &&
-          filteredData.map((entry: any, index: any) => {
+        {filteredData &&
+          filteredData?.map((entry: any, index: any) => {
             switch (entry.type) {
               case "note":
                 return (

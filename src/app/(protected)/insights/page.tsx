@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { defaultValue } from "./default-value";
-import HomeSkeletonLoader from "../home/skeleton";
+import HomeSkeletonLoader, { Skeleton } from "../home/skeleton";
 import TotalCard from "./totalCard";
 import { LucideAudioWaveform, LucideCalendar } from "lucide-react";
 import { useDateStore } from "@/app/states/calendarState";
@@ -36,7 +36,6 @@ import {
   XAxis,
 } from "recharts";
 
-
 const chartConfig = {
   score: {
     label: "Score",
@@ -60,16 +59,16 @@ const uniqueTypes = [
 ];
 
 const InsightsPage = () => {
-  const { selectedDate, setSelectedDate } = useDateStore();
-  const [dateRange, setDateRange] = useState({
-    from: new Date(),
-    to: new Date(),
+  const [dateRange, setDateRange] = useState(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return { from: today, to: today };
   });
 
   const { isLoading, isError, data, isSuccess } = useQuery<Entry[]>({
     queryKey: [queryKey.ALL_ENTRIES_RANGE, dateRange],
     queryFn: () => getAllEntriesByRange(dateRange),
-    enabled: !!selectedDate,
+    enabled: !!dateRange,
     retry: 1,
   });
 
@@ -77,6 +76,7 @@ const InsightsPage = () => {
     isLoading: isSentimentLoading,
     isError: isSentimentError,
     data: sentiment,
+    isFetching: isSentimentFetching,
     isSuccess: isSentimentSuccess,
   } = useQuery<any>({
     queryKey: [queryKey.SENTIMENT_ANALYSIS, data],
@@ -91,7 +91,12 @@ const InsightsPage = () => {
 
   useEffect(() => {
     if (isSentimentSuccess) {
-      setSentimentData(sentiment);
+      //set sentiment data ordered by score descending
+      setSentimentData(
+        sentiment?.sort((a: SentimentType, b: SentimentType) => {
+          return b.score - a.score;
+        })
+      );
     }
   }, [isSentimentSuccess, sentiment, sentimentData]);
 
@@ -157,9 +162,11 @@ const InsightsPage = () => {
       </div>
 
       {isLoading && (
-        <>
-          <HomeSkeletonLoader />
-        </>
+        <div className="flex flex-row w-full gap-4">
+          <Skeleton height="100px" width="100%" className="rounded-3xl" />
+          <Skeleton height="100px" width="100%" className="rounded-3xl" />
+          <Skeleton height="100px" width="100%" className="rounded-3xl" />
+        </div>
       )}
 
       {data?.length! > 0 && (
@@ -218,10 +225,6 @@ const InsightsPage = () => {
         </div>
       )}
 
-      {isSentimentLoading && (
-        <div className="w-full h-10 bg-white/50 animate-pulse mt-4"></div>
-      )}
-
       <div className="flex flex-col xl:flex-row w-full gap-4 mt-4 ">
         <div className="bg-white/50 rounded-3xl p-4 flex flex-col gap-4 w-full">
           <div className="w-full p-3 flex flex-row bg-white rounded-2xl gap-2 items-center">
@@ -259,16 +262,21 @@ const InsightsPage = () => {
               </TooltipProvider>
             </div>
           </div>
-          {sentiment?.length! > 0 && (
+
+          {sentiment?.length > 0 && (
             <div className="p-2 gap-2 flex flex-col">
-              {sentiment?.map((item: SentimentType, index: number) => (
-                <div className=" w-full" key={index}>
+              {sentimentData?.map((item: SentimentType, index: number) => (
+                <div className=" w-full group" key={index}>
                   <div className="flex flex-row items-center justify-between">
                     <div className="flex flex-col gap-2 w-full">
-                      <h3 className="text-sm font-medium text-black/70">
-                        {item.feeling}
-                      </h3>
-                      {/* <h1 className="font-medium text-2xl">{item.score}</h1> */}
+                      <div className="flex flex-row">
+                        <h3 className="text-sm font-medium text-black/70">
+                          {item.feeling}
+                        </h3>
+                        <p className="font-medium text-sm ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300">
+                          {item.score}%
+                        </p>
+                      </div>
 
                       <div className="w-full bg-white rounded-full h-2.5 mb-4 dark:bg-gray-700">
                         <motion.div
@@ -293,28 +301,50 @@ const InsightsPage = () => {
               ))}
             </div>
           )}
+
+          {(isSentimentLoading || isLoading) && (
+            <div className="flex flex-col gap-4 h-full">
+              {[...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className="w-full h-full bg-white/70 rounded-2xl animate-pulse"
+                ></div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="bg-white/50 rounded-3xl h-full w-full flex items-center">
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square min-h-[200px] max-h-[500px] w-full"
-          >
-            <RadarChart data={sentiment}>
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <PolarAngleAxis dataKey="feeling" />
-              <PolarGrid />
-              <Radar
-                dataKey="score"
-                fill="var(--color-score)"
-                fillOpacity={0.6}
-                dot={{
-                  r: 4,
-                  fillOpacity: 1,
-                }}
-              />
-            </RadarChart>
-          </ChartContainer>
+        <div className="bg-white/50 rounded-3xl h-full w-full flex items-center p-4">
+          {isSentimentSuccess && sentiment.length > 0 && (
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square min-h-[200px] max-h-[480px] w-full"
+            >
+              <RadarChart data={sentiment}>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent />}
+                />
+                <PolarAngleAxis dataKey="feeling" />
+                <PolarGrid />
+                <Radar
+                  dataKey="score"
+                  fill="var(--color-score)"
+                  fillOpacity={0.6}
+                  dot={{
+                    r: 4,
+                    fillOpacity: 1,
+                  }}
+                />
+              </RadarChart>
+            </ChartContainer>
+          )}
+
+          {(isSentimentLoading || isLoading) && (
+            <div className="mx-auto aspect-square min-h-[200px] max-h-[480px] w-full">
+              <div className="w-full h-full bg-white/70 rounded-2xl animate-pulse"></div>
+            </div>
+          )}
         </div>
       </div>
     </div>

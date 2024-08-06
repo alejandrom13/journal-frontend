@@ -23,7 +23,7 @@ const HomeSkeletonLoader = () => {
 
 export default HomeSkeletonLoader;
 
-const Skeleton = ({ height, width, className }: any) => {
+export const Skeleton = ({ height, width, className }: any) => {
   return (
     <div
       style={{ height: height, width: width }}

@@ -29,9 +29,12 @@ async function getAllEntries(date: Date) {
 
 async function getAllEntriesByRange({ from, to }: { from: Date; to: Date }) {
   //format date to yyyy-mm-dd
+  
   try {
     const fromDate = from.toISOString().split("T")[0];
     const toDate = to.toISOString().split("T")[0];
+
+    console.log(fromDate, toDate);
 
     const response = await fetch(apiUrl + `/entry/all/${fromDate}/${toDate}`, {
       headers: {
@@ -45,7 +48,6 @@ async function getAllEntriesByRange({ from, to }: { from: Date; to: Date }) {
 
     const data = await response.json();
     console.log(data);
-
     return data;
   } catch (error) {
     console.error("Error:", error);
@@ -89,12 +91,12 @@ const updateEntry = async ({
   id,
   type,
   content,
-  createdAt,
+  updatedAt,
 }: {
   id: string;
   type: string;
   content: any;
-  createdAt: string;
+  updatedAt: string;
 }) => {
   try {
     const apiUrl = process.env.API_URL;
@@ -108,7 +110,7 @@ const updateEntry = async ({
       body: JSON.stringify({
         type: type,
         content: content,
-        createdAt: createdAt,
+        updatedAt: updatedAt,
       }),
     });
 
