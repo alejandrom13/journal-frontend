@@ -29,7 +29,7 @@ import { Entry } from "@/lib/entryType";
 import MoodCard from "@/components/entries/mood/mood-card";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useOnborda } from "onborda";
-import { useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
@@ -132,9 +132,10 @@ const HomePage = () => {
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const { startOnborda } = useOnborda();
-  const { user } = useUser();
+  const { user } = useClerk();
 
   useEffect(() => {
+    
     if (
       user?.publicMetadata?.onboardingCompleted === false ||
       user?.publicMetadata?.onboardingCompleted === undefined ||
@@ -352,3 +353,5 @@ function entryType(type: string) {
       return null;
   }
 }
+
+

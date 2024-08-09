@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { finishOnboarding } from "@/actions/handleTheme";
 import { toast } from "sonner";
 
@@ -28,14 +28,16 @@ const CustomCard: React.FC<CardComponentProps> = ({
 }) => {
   // Onborda hooks
   const { closeOnborda } = useOnborda();
-  const { user } = useUser();
+  const clerk = useClerk();
   async function handleOnboardingFinish() {
     try {
       const data = {
-        userId: user?.id!,
+        userId: clerk?.user?.id!,
       };
 
       await finishOnboarding(data);
+      await clerk?.user?.reload();
+
       closeOnborda();
     } catch (error) {
       toast.error("An error occurred while finishing onboarding!");
