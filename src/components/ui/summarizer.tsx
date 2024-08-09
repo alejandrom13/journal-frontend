@@ -38,6 +38,7 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
       className={`w-full bg-white/40 p-4 rounded-3xl transition-all ease-in
   ${open ? "ring-2 ring-offset-2 ring-primary" : ""}
   `}
+
     >
       <div
         className="w-full bg-white/60 h-16 rounded-xl flex flex-row items-center p-4 cursor-pointer hover:bg-white transition-all"

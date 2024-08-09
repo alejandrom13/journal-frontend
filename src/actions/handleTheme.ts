@@ -3,7 +3,6 @@
 import { clerkClient } from "@clerk/nextjs/server";
 
 async function updateTheme(data: any) {
-
   const clerk = clerkClient();
   const response = await clerk.users.updateUserMetadata(data?.userId, {
     publicMetadata: {
@@ -14,4 +13,15 @@ async function updateTheme(data: any) {
   return JSON.stringify(response);
 }
 
-export { updateTheme };
+async function finishOnboarding(data: any) {
+  const clerk = clerkClient();
+  const response = await clerk.users.updateUserMetadata(data?.userId, {
+    publicMetadata: {
+      onboardingCompleted: true,
+    },
+  });
+
+  return JSON.stringify(response);
+}
+
+export { updateTheme, finishOnboarding };

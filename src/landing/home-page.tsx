@@ -62,7 +62,7 @@ const HomePageLanding = () => {
               </h1>
               <p className="mt-5 text-base text-black/80 sm:text-xl">
                 Effortlessly capture your daily activities and unlock meaningful
-                insights with <span className="font-semibold">Janna</span>.
+                insights with <span className="font-semibold">Jana AI</span>.
               </p>
 
               {!user && (

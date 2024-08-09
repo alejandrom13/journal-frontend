@@ -63,6 +63,7 @@
     "net": "^1.0.2",
     "next": "14.2.5",
     "next-themes": "^0.3.0",
+    "onborda": "^1.2.2",
     "pocketbase": "^0.21.4",
     "react": "^18",
     "react-day-picker": "^9.0.3",

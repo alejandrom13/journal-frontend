@@ -17,9 +17,10 @@ export const theme = {
       "2xl": "1400px",
     },
   },
+  content: ["./node_modules/onborda/dist/**/*.{js,ts,jsx,tsx}"],
   extend: {
     gridAutoRows: {
-      'auto-max': 'minmax(auto, max-content)',
+      "auto-max": "minmax(auto, max-content)",
     },
     colors: {
       border: "hsl(var(--border))",
@@ -83,13 +84,13 @@ export const theme = {
 export const plugins = [
   require("tailwindcss-animate"),
   require("@tailwindcss/typography"),
-  require("tailwindcss-animate"), 
+  require("tailwindcss-animate"),
   require("@assistant-ui/react/tailwindcss"),
   require("tailwind-gradient-mask-image"),
   function ({ addUtilities }) {
     addUtilities({
-      '.break-inside': {
-        'break-inside': 'avoid-column',
+      ".break-inside": {
+        "break-inside": "avoid-column",
       },
     });
   },

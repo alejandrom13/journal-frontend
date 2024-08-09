@@ -27,6 +27,9 @@ import MainLogo from "@/lib/logo";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { Entry } from "@/lib/entryType";
 import MoodCard from "@/components/entries/mood/mood-card";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useOnborda } from "onborda";
+import { useUser } from "@clerk/nextjs";
 
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
@@ -41,6 +44,48 @@ const HomePage = () => {
     retry: 1,
   });
 
+  useHotkeys(
+    "left",
+    () => {
+      const newDate = new Date(selectedDate);
+      newDate.setDate(selectedDate.getDate() - 1);
+      setSelectedDate(newDate);
+      setSummarizer(false);
+    },
+    {
+      enableOnFormTags: false,
+      enableOnContentEditable: false,
+    }
+  );
+
+  useHotkeys(
+    "right",
+    () => {
+      const newDate = new Date(selectedDate);
+      newDate.setDate(selectedDate.getDate() + 1);
+      setSelectedDate(newDate);
+      setSummarizer(false);
+    },
+    {
+      enableOnFormTags: false,
+      enableOnContentEditable: false,
+    }
+  );
+
+  useHotkeys(
+    "up",
+    () => {
+      //todays date
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      setSelectedDate(now);
+      setSummarizer(false);
+    },
+    {
+      enableOnFormTags: false,
+      enableOnContentEditable: false,
+    }
+  );
   const filteredData = useMemo(() => {
     if (!data) return [];
     if (selectedType === "all") {
@@ -86,6 +131,18 @@ const HomePage = () => {
   }
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  const { startOnborda } = useOnborda();
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (
+      user?.publicMetadata?.onboardingCompleted === false ||
+      user?.publicMetadata?.onboardingCompleted === undefined
+    ) {
+      startOnborda();
+    }
+  }, [startOnborda, user?.publicMetadata?.onboardingCompleted]);
+
   return (
     <>
       <div className="flex flex-row justify-center">
@@ -100,6 +157,7 @@ const HomePage = () => {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
+                  id="onborda-step2"
                 >
                   <Button
                     variant={"outline"}
@@ -171,7 +229,7 @@ const HomePage = () => {
           </motion.div>
         </AnimatePresence>
       </div>
-      
+
       <MonthCarousel
         initialDate={selectedDate}
         onChange={(newDate) => {
