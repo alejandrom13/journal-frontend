@@ -39,6 +39,7 @@ const MonthCarousel: React.FC<MonthCarouselProps> = ({
   const [viewportRef, embla] = useEmblaCarousel({
     skipSnaps: true,
     inViewThreshold: 0.7,
+  
   });
   const [days, setDays] = useState<number[]>([]);
 
@@ -75,10 +76,10 @@ const MonthCarousel: React.FC<MonthCarouselProps> = ({
   };
 
   return (
-    <div className="relative pt-4">
+    <div className="relative pt-4 gradient-mask-r-90-d">
 
       <div className="overflow-hidden relative select-none" ref={viewportRef}>
-        <div className="embla__container flex">
+        <div className="embla__container flex mx-20">
           {days.map((day) => (
             <div key={day} className="embla__slide flex-shrink-0 mx-2">
               <Day

@@ -171,6 +171,7 @@ const HomePage = () => {
           </motion.div>
         </AnimatePresence>
       </div>
+      
       <MonthCarousel
         initialDate={selectedDate}
         onChange={(newDate) => {

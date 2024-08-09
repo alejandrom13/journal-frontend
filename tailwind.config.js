@@ -83,8 +83,9 @@ export const theme = {
 export const plugins = [
   require("tailwindcss-animate"),
   require("@tailwindcss/typography"),
-  require("tailwindcss-animate"), // make sure to "npm install tailwindcss-animate"
+  require("tailwindcss-animate"), 
   require("@assistant-ui/react/tailwindcss"),
+  require("tailwind-gradient-mask-image"),
   function ({ addUtilities }) {
     addUtilities({
       '.break-inside': {
