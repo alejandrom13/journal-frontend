@@ -137,11 +137,16 @@ const HomePage = () => {
   useEffect(() => {
     if (
       user?.publicMetadata?.onboardingCompleted === false ||
-      user?.publicMetadata?.onboardingCompleted === undefined
+      user?.publicMetadata?.onboardingCompleted === undefined ||
+      user?.publicMetadata === undefined
     ) {
       startOnborda();
     }
-  }, [startOnborda, user?.publicMetadata?.onboardingCompleted]);
+  }, [
+    startOnborda,
+    user?.publicMetadata,
+    user?.publicMetadata?.onboardingCompleted,
+  ]);
 
   return (
     <>
