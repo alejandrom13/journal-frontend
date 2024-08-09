@@ -20,7 +20,13 @@ const ChatUI = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [chatHeight, setChatHeight] = useState<number>(0);
 
-  const { selectedDate } = useDateStore();
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); 
+
+  const [dateRange, setDateRange] = useState({
+    from: now,
+    to: now,
+  });
   const {
     messages,
     input,
@@ -33,8 +39,8 @@ const ChatUI = () => {
   } = useChat({
     api: "api/chat",
     body: {
-      from: selectedDate,
-      to: selectedDate,
+      from: dateRange.from,
+      to: dateRange.to,
     },
   });
 

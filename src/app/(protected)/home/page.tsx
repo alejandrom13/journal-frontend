@@ -26,6 +26,7 @@ import HomeSkeletonLoader from "./skeleton";
 import MainLogo from "@/lib/logo";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { Entry } from "@/lib/entryType";
+import MoodCard from "@/components/entries/mood/mood-card";
 
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
@@ -251,6 +252,8 @@ const HomePage = () => {
               );
             case "audio":
               return <AudioCard key={entry.id} entry={entry} index={index} />;
+            case "mood":
+              return <MoodCard key={entry.id} entry={entry} index={index} />;
             case "spotify":
             // return <SpotifyCard key={entry.id} content={entry} />;
             default:
@@ -277,6 +280,8 @@ function entryType(type: string) {
       return "Audio";
     case "spotify":
       return "Spotify";
+    case "mood":
+      return "Mood";
     case "all":
       return "All";
     default:

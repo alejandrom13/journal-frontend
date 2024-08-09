@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEntry } from "@/actions/entries";
@@ -9,6 +9,9 @@ import { simulateKeyPress } from "@/lib/utils";
 import queryKey from "@/lib/queryKeys";
 import Editor2 from "../editor/editor2";
 import { useDateStore } from "@/app/states/calendarState";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Icon } from "@iconify/react/dist/iconify.js";
+
 const CreateNote = () => {
   // const [editorData, setEditorData] = useState<OutputData | undefined>() as any;
   const [editorValue, setEditorValue] = useState<string>();
@@ -48,6 +51,11 @@ const CreateNote = () => {
     }
   };
 
+  useHotkeys("ctrl+enter", () => handleSubmission(), {
+    enableOnFormTags: true,
+    enableOnContentEditable: true,
+  });
+
   return (
     <motion.div
       className="z-50"
@@ -71,11 +79,7 @@ const CreateNote = () => {
         layout
       >
         <div className="overflow-y-scroll overflow-x-hidden">
-          {/* <Editor
-            data={editorData}
-            onChange={setEditorData}
-            editorRef={editorRef}
-          /> */}
+     
           <Editor2
             value={editorValue}
             onChange={(val: string) => {
@@ -83,17 +87,30 @@ const CreateNote = () => {
             }}
           />
         </div>
-
         <div className="flex flex-col mt-auto">
+          <p className="text-xs flex justify-center pb-2  text-black/50">
+            {selectedDate.toDateString()}
+          </p>
+
           {isError && <div>Error</div>}
           <Button
             variant={"ghost"}
             size={"lg"}
-            className="text-md rounded-full text-primary hover:text-primary bg-primary/20 hover:bg-primary/30"
+            className="text-md rounded-full text-primary hover:text-primary bg-primary/20 hover:bg-primary/30 relative group"
             onClick={handleSubmission}
             disabled={isPending}
           >
-            {isPending ? <div className="">Saving...</div> : "Save"}
+            {isPending ? (
+              <div className="">Saving...</div>
+            ) : (
+              <div className="">
+                Save
+                <span className="text-sm text-primary/70 ml-2 opacity-0 group-hover:opacity-100 duration-200 flex flex-row items-center absolute right-4 bottom-3">
+                  Ctrl +{" "}
+                  <Icon icon={"uil:enter"} height={15} className="ml-2" />
+                </span>
+              </div>
+            )}
           </Button>
         </div>
       </motion.div>

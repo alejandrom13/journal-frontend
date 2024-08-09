@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -10,27 +10,14 @@ import {
 } from "@/components/ui/tooltip";
 
 import {
-  Book,
-  BotMessageSquare,
+
   Box,
-  Code2,
-  ExternalLinkIcon,
-  HomeIcon,
-  ImageIcon,
-  LifeBuoy,
-  LucideCircleDot,
+
   LucideLightbulb,
   LucideMessageCircle,
   LucideNotebook,
   LucideSettings2,
-  Pen,
-  Plus,
-  Settings2,
-  SquareMenu,
-  SquareUser,
-  TerminalIcon,
-  TerminalSquareIcon,
-  Triangle,
+
 } from "lucide-react";
 
 import { ModeToggle } from "../dark-mode";
@@ -40,18 +27,27 @@ import SidebarItem from "./sidebar-item";
 import { SignedIn, useClerk, UserButton, useUser } from "@clerk/nextjs";
 import ThemeSwitcher from "../theme-switcher";
 import MainLogo from "@/lib/logo";
+import { useLoadingState } from "@/app/(protected)/loadingState";
 
 const tooltipDelay = 50;
 
 const Sidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { setLoading } = useLoadingState();
 
   const handleNavigation = (path: string) => {
     router.push(path);
   };
 
   const clerk = useUser();
+
+  useEffect(() => {
+    if (clerk.user) {
+      setLoading(false);
+    }
+  }, [clerk.user, setLoading]);
+
   const { openUserProfile } = useClerk();
 
   const userButtonRef = useRef<HTMLDivElement>(null);

@@ -63,8 +63,8 @@ const CommandButton = () => {
     <div className=" fixed bottom-0 left-[60%] -translate-x-1/2 mb-10 bg-white/50 backdrop-blur-lg rounded-[45px] p-3   flex-col justify-end hidden sm:block">
       <AnimatePresence>
         {activeButton === "editor" && <CreateNote key="editor" />}
-        {activeButton === "audio" && <AudioRecorder />}
-        {activeButton === "menu" && <MenuEntry />}
+        {activeButton === "audio" && <AudioRecorder key="audio" />}
+        {activeButton === "menu" && <MenuEntry key="menu" />}
       </AnimatePresence>
 
       <div className="flex flex-row justify-center items-center gap-3 ">

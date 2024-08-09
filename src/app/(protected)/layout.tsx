@@ -1,6 +1,7 @@
 import Sidebar from "@/components/sidebar/sidebar";
-import { useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
+import Loading from "./loading_state";
+import { useLoadingState } from "./loadingState";
 
 const Layout = ({ children }: any) => {
   return (

@@ -5,9 +5,11 @@ import { useKeystrokeState } from "@/app/states/keyStrokeState";
 import Editor2 from "@/components/editor/editor2";
 import { Button } from "@/components/ui/button";
 import queryKey from "@/lib/queryKeys";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { toast } from "sonner";
 
 interface UpdateEntryVariables {
@@ -53,6 +55,11 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
       setEditorValue(s);
     }
   }, [entry?.content]);
+
+  useHotkeys("ctrl+enter", () => handleSubmission(), {
+    enableOnFormTags: true,
+    enableOnContentEditable: true,
+  });
 
   const handleSubmission = () => {
     if (editorValue) {
@@ -113,11 +120,21 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
                 <Button
                   variant={"ghost"}
                   size={"lg"}
-                  className="text-md rounded-full text-primary hover:text-primary bg-primary/20 hover:bg-primary/30"
+                  className="text-md rounded-full text-primary hover:text-primary bg-primary/20 hover:bg-primary/30 relative group"
                   onClick={handleSubmission}
                   disabled={isPending}
                 >
-                  {isPending ? <div className="">Updating...</div> : "Update"}
+                  {isPending ? (
+                    <div className="">Updating...</div>
+                  ) : (
+                    <div className="">
+                      Update
+                      <span className="text-sm text-primary/70 ml-2 opacity-0 group-hover:opacity-100 duration-200 flex flex-row items-center absolute right-4 bottom-3">
+                        Ctrl +{" "}
+                        <Icon icon={"uil:enter"} height={15} className="ml-2" />
+                      </span>
+                    </div>
+                  )}
                 </Button>
               </div>
             </motion.div>
