@@ -30,6 +30,7 @@ import MoodCard from "@/components/entries/mood/mood-card";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useOnborda } from "onborda";
 import { useClerk, useUser } from "@clerk/nextjs";
+import NoteCardV2 from "@/components/entries/note/note-card.v2";
 
 const HomePage = () => {
   const { selectedDate, setSelectedDate } = useDateStore();
@@ -135,7 +136,6 @@ const HomePage = () => {
   const { user } = useClerk();
 
   useEffect(() => {
-    
     if (
       user?.publicMetadata?.onboardingCompleted === false ||
       user?.publicMetadata?.onboardingCompleted === undefined ||
@@ -302,9 +302,18 @@ const HomePage = () => {
         {/* className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-auto" */}
         {filteredData?.map((entry: any, index: any) => {
           switch (entry.type) {
+            // case "note":
+            //   return (
+            //     <NoteCard
+            //       key={entry.id}
+            //       entry={entry}
+            //       index={index}
+            //       id={entry.id}
+            //     />
+            //   );
             case "note":
               return (
-                <NoteCard
+                <NoteCardV2
                   key={entry.id}
                   entry={entry}
                   index={index}
@@ -353,5 +362,3 @@ function entryType(type: string) {
       return null;
   }
 }
-
-

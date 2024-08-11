@@ -22,7 +22,7 @@ const Editor2: React.FC<EditorProps> = ({
       onValueChange={(val: string) => {
         onChange(val);
       }}
-      outputValue="json"
+      outputValue="html"
       disabled={false}
       contentClass=""
       disableToolbar={disableToolbar}

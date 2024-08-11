@@ -39,10 +39,12 @@ const CreateNote = () => {
 
   const handleSubmission = () => {
     if (editorValue) {
-      const jsonRes = JSON.parse(editorValue);
+      // const jsonRes = JSON.parse(editorValue);
       mutate({
         type: "note",
-        content: jsonRes,
+        content: {
+          text: editorValue
+        },
         createdAt: selectedDate.toISOString(),
       });
     } else {
@@ -84,6 +86,7 @@ const CreateNote = () => {
             value={editorValue}
             onChange={(val: string) => {
               setEditorValue(val);
+              console.log(val);
             }}
           />
         </div>

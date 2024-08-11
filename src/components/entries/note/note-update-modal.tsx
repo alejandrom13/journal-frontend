@@ -51,8 +51,8 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
 
   useEffect(() => {
     if (entry?.content) {
-      const s = JSON.stringify(entry?.content);
-      setEditorValue(s);
+      // const s = JSON.stringify(entry?.content);
+      setEditorValue(entry?.content?.text);
     }
   }, [entry?.content]);
 
@@ -63,11 +63,13 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
 
   const handleSubmission = () => {
     if (editorValue) {
-      const jsonRes = JSON.parse(editorValue);
+    
       mutate({
         id: entry?.id,
         type: "note",
-        content: jsonRes,
+        content: {
+          text: editorValue
+        },
         updatedAt: entry?.createdAt,
       });
     } else {
@@ -108,7 +110,7 @@ const NoteUpdateModal = ({ entry, setIsOpen, isOpen, setValue }: any) => {
             >
               <div className="overflow-y-scroll overflow-x-hidden">
                 <Editor2
-                  value={JSON.parse(editorValue)}
+                  value={editorValue}
                   onChange={(val: string) => {
                     setEditorValue(val);
                   }}

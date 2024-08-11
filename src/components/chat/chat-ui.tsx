@@ -5,28 +5,50 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChat } from "ai/react";
 import ChatBubble from "./chat-bubble";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, CalendarIcon, Info } from "lucide-react";
 import Image from "next/image";
 import { useDateStore } from "@/app/states/calendarState";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import messagestest from "./chat_examples";
 import ScrollToBottom from "react-scroll-to-bottom";
 import { useQuery } from "@tanstack/react-query";
 import queryKey from "@/lib/queryKeys";
 import { generateCustomQuestions } from "@/actions/ai";
 import MainLogo2 from "@/lib/logo2";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { DayPicker } from "react-day-picker";
+import { format } from "date-fns-tz";
+import moment from "moment";
+import { Entry } from "@/lib/entryType";
+import { getAllEntriesByRange } from "@/actions/entries";
 
 const ChatUI = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [chatHeight, setChatHeight] = useState<number>(0);
 
+
+
+
   const now = new Date();
-  now.setHours(0, 0, 0, 0); 
+  now.setHours(0, 0, 0, 0);
 
   const [dateRange, setDateRange] = useState({
     from: now,
     to: now,
   });
+
+  const { isLoading: entriesLoading, isError:entriesError, data: entriesData, isSuccess: entriesSuccess } = useQuery<Entry[]>({
+    queryKey: [queryKey.ALL_ENTRIES_RANGE, dateRange],
+    queryFn: () => getAllEntriesByRange(dateRange),
+    enabled: !!dateRange,
+    retry: 1,
+  });
+
+  const [preDateRange, setPreDateRange] = useState({
+    from: now,
+    to: now,
+  });
+
   const {
     messages,
     input,
@@ -34,7 +56,6 @@ const ChatUI = () => {
     handleSubmit,
     data,
     isLoading,
-    setMessages,
     append,
   } = useChat({
     api: "api/chat",
@@ -43,6 +64,8 @@ const ChatUI = () => {
       to: dateRange.to,
     },
   });
+
+  
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
@@ -81,9 +104,85 @@ const ChatUI = () => {
     scrollToBottom();
   }, [messages]);
 
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [displayedMonth, setDisplayedMonth] = useState<Date>(new Date());
+
   return (
     <div className={`flex flex-col h-full`}>
-      <div className="flex-1 overflow-y-auto px-6 py-4">
+      <div className="flex flex-col  items-start pt-4 pl-4">
+        <Popover open={popoverOpen}>
+          <AnimatePresence>
+            <PopoverTrigger asChild>
+              <motion.div
+                layout
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="flex"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                id="onborda-step2"
+              >
+                <Button
+                  variant={"outline"}
+                  className="border-none  rounded-full font-semibold text-md text-primary hover:text-primary"
+                  onClick={() => setPopoverOpen((prev) => !prev)}
+                >
+                  <CalendarIcon className="mr-2" size={20} />
+                  {moment(dateRange.from).format("MMM DD")} -
+                  {moment(dateRange.to).format("MMM DD")}
+                </Button>
+              </motion.div>
+            </PopoverTrigger>
+          </AnimatePresence>
+
+          <PopoverContent className="w-auto p-4 bg-white/40 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl">
+            <DayPicker
+              mode="range"
+              captionLayout="dropdown"
+              numberOfMonths={1}
+              style={{
+                width: "auto",
+                backgroundColor: "transparent",
+              }}
+              selected={{
+                from: preDateRange.from,
+                to: preDateRange.to,
+              }}
+              onSelect={(selected, triggerDate, modifiers, e) => {
+                setPreDateRange({
+                  from: selected?.from!,
+                  to: selected?.to!,
+                });
+              }}
+              min={2}
+              max={31}
+              excludeDisabled
+              month={displayedMonth}
+              onMonthChange={(month) => setDisplayedMonth(month)}
+              showOutsideDays
+            />
+
+            <div className="w-full pt-4">
+              <Button
+                variant={"default"}
+                className="w-full rounded-full"
+                onClick={() => {
+                  setPopoverOpen(false);
+
+                  setDateRange({
+                    from: preDateRange?.from!,
+                    to: preDateRange?.to!,
+                  });
+                }}
+              >
+                Done
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-4">
         {messages.map((message: any) => (
           <motion.div
             key={message.id}
@@ -121,7 +220,7 @@ const ChatUI = () => {
             <div className="flex flex-col">
               <h3 className="text-lg font-medium text-primary">Jana</h3>
               <p className="text-md text-primary">
-                I can help with today&quot;s journal entries. Ask me anything!{" "}
+                I can help with today{"'"}s journal entries. Ask me anything!{" "}
               </p>
             </div>
           </div>

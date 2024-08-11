@@ -42,8 +42,10 @@ export async function POST(req: Request, res: Response) {
         6. Respect the user's privacy and maintain confidentiality.
         7. Provide helpful suggestions and resources when appropriate.
         8. Provide the user with information of the day
+
       ${formattedData}
 
+      
         today's date is ${from}
         Remember to be concise yet thorough, and always prioritize the user's needs and well-being.
       `,
