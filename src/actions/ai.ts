@@ -25,7 +25,8 @@ const generateSummary = async (data: any) => {
     Here's the data to summarize:
     
     ${data}
-    
+
+    - If there is no data available for, you can say that there is no data available for that date.
     Please ensure the response is concise, informative, and easy to read.`,
   });
 

@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useChat } from "ai/react";
 import ChatBubble from "./chat-bubble";
-import { ArrowRight, CalendarIcon, Info } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarIcon,
+  Info,
+  LucideCheckCircle,
+  LucideLoader2,
+} from "lucide-react";
 import Image from "next/image";
 import { useDateStore } from "@/app/states/calendarState";
 import { AnimatePresence, motion } from "framer-motion";
@@ -26,9 +32,6 @@ const ChatUI = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [chatHeight, setChatHeight] = useState<number>(0);
 
-
-
-
   const now = new Date();
   now.setHours(0, 0, 0, 0);
 
@@ -37,7 +40,12 @@ const ChatUI = () => {
     to: now,
   });
 
-  const { isLoading: entriesLoading, isError:entriesError, data: entriesData, isSuccess: entriesSuccess } = useQuery<Entry[]>({
+  const {
+    isLoading: entriesLoading,
+    isError: entriesError,
+    data: entriesData,
+    isSuccess: entriesSuccess,
+  } = useQuery<Entry[]>({
     queryKey: [queryKey.ALL_ENTRIES_RANGE, dateRange],
     queryFn: () => getAllEntriesByRange(dateRange),
     enabled: !!dateRange,
@@ -62,10 +70,10 @@ const ChatUI = () => {
     body: {
       from: dateRange.from,
       to: dateRange.to,
+      currentDay: now,
+      data: entriesData,
     },
   });
-
-  
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
@@ -109,7 +117,7 @@ const ChatUI = () => {
 
   return (
     <div className={`flex flex-col h-full`}>
-      <div className="flex flex-col  items-start pt-4 pl-4">
+      <div className="flex flex-row  items-start pt-4 pl-4">
         <Popover open={popoverOpen}>
           <AnimatePresence>
             <PopoverTrigger asChild>
@@ -180,6 +188,20 @@ const ChatUI = () => {
             </div>
           </PopoverContent>
         </Popover>
+
+        <div className="ml-2  flex flex-row gap-2 h-full items-center px-2 ">
+          {entriesSuccess ? (
+            <>
+              <LucideCheckCircle className="w-4 h-4 text-primary" />
+              <p className="text-sm">Context successfully loaded.</p>
+            </>
+          ) : (
+            <>
+              <LucideLoader2 className="w-4 h-4 text-primary animate-spin" />
+              <p className="text-sm">Context is being loaded.</p>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4">

@@ -8,26 +8,28 @@ import { z } from "zod";
 
 export async function POST(req: Request, res: Response) {
   try {
-    const { messages, from, to } = await req.json();
-    const trainingData = await getTrainingData({
-      from: from,
-      to: to,
-    });
+    const { messages, from, to, currentDay, data} = await req.json();
+    // const trainingData = await getTrainingData({
+    //   from: from,
+    //   to: to,
+    // });
 
     const google = createGoogleGenerativeAI({
       apiKey: process.env.GEMINI_API_KEY,
     });
 
-    const formattedData = trainingData
+    const formattedData = data
       .map((entry: any) => {
-        if (typeof entry.content === "object") {
-          return JSON.stringify(entry.content);
-        }
-        return entry.content.toString();
+        const content =
+          typeof entry.content === "object"
+            ? JSON.stringify(entry.content)
+            : entry.content.toString();
+
+        return `${entry.createdAt}: ${content}`;
       })
       .join("\n\n");
 
-      console.log("formattedData", formattedData);
+    console.log("formattedData", formattedData);
 
     const result = await streamText({
       model: google("models/gemini-1.5-pro-latest"),
@@ -45,9 +47,10 @@ export async function POST(req: Request, res: Response) {
 
       ${formattedData}
 
-      
-        today's date is ${from}
-        Remember to be concise yet thorough, and always prioritize the user's needs and well-being.
+        - If there is no data available for, you can say that there is no data available for that date.
+
+        today's date is ${currentDay}
+        Remember to be concise yet through, and always prioritize the user's needs and well-being.
       `,
 
       messages: convertToCoreMessages(messages),
@@ -66,6 +69,7 @@ async function getTrainingData({ from, to }: { from: string; to: string }) {
     from: newFrom,
     to: newTo,
   });
+
 
   return res;
 }
