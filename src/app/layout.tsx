@@ -14,7 +14,7 @@ const fontSans = FontSans({
   variable: "--font-sans",
 });
 export const metadata: Metadata = {
-  metadataBase: new URL("https://journal-self.vercel.app/"),
+  metadataBase: new URL("https://jana.my/"),
   title: "Jana - Your Personal AI Journal",
   description:
     "Jana is your personal AI journal that helps you reflect on your thoughts and feelings.",
