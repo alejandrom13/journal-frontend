@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import LogMood from "./log-mood";
+import CreateCalendarEntry from "../calendar/create-calendar";
 
 const MenuEntry: React.FC = () => {
   const [block, setBlock] = React.useState("none");
@@ -75,7 +76,9 @@ const MenuEntry: React.FC = () => {
               variant="ghost"
               className={`rounded-2xl group text-slate-800 py-3 h-16 justify-start gap-3 text-md w-full transition-all duration-200 hover:bg-white 
           hover:text-primary`}
-              onClick={() => {}}
+              onClick={() => {
+                setBlock("event");
+              }}
               asChild
             >
               <Button variant={"ghost"}>
@@ -104,7 +107,9 @@ const MenuEntry: React.FC = () => {
             <LogMood />
           </>
         ) : block === "event" ? (
-          <></>
+          <>
+          <CreateCalendarEntry />
+          </>
         ) : null}
       </motion.div>
     </motion.div>

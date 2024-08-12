@@ -4,6 +4,7 @@ const queryKey = {
   SENTIMENT_ANALYSIS: "sentiment-analysis",
   DELETE_INTEGRAION: "delete-integration",
   CUSTOM_QUESTIONS: "custom-questions",
+  CREATE_EVENT: "create-event",
 };
 
 export default queryKey;

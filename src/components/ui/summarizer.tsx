@@ -1,10 +1,17 @@
 import { generateSummary } from "@/actions/ai";
 import { useMutation } from "@tanstack/react-query";
-import { WandSparkles, ChevronDown } from "lucide-react";
+import {
+  WandSparkles,
+  ChevronDown,
+  LucideLoaderCircle,
+  LucideCheckCircle,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { marked } from "marked";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import { formatData } from "@/lib/ai/formatData";
+import { useCompletion } from "ai/react";
+import { duration } from "moment";
 interface SummarizerProps {
   data: any;
   openState?: boolean;
@@ -17,28 +24,54 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
     setOpen(openState);
   }, [openState]);
 
-  const {
-    mutate,
-    data: aiData,
-    isPending,
-    isSuccess,
-  } = useMutation({
-    mutationKey: ["summarize"],
-    mutationFn: () => generateSummary(formatData(data)),
+  // const {
+  //   mutate,
+  //   data: aiData,
+  //   isPending,
+  //   isSuccess,
+  // } = useMutation({
+  //   mutationKey: ["summarize"],
+  //   mutationFn: () => generateSummary(formatData(data)),
+  // });
+
+  const { completion, complete, isLoading } = useCompletion({
+    api: "api/summarize",
+    body: {
+      data: formatData(data),
+    },
   });
 
-  let htmlContent;
+  const controls = useAnimation();
 
-  if (isSuccess) {
-    htmlContent = marked(aiData);
-  }
+  const handleGenerateSummary = async () => {
+    await complete(formatData(data));
+    controls.start({ opacity: 1, y: 0 });
+  };
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, duration: 0.5 },
+  };
+
+  // if (isSuccess) {
+  //   htmlContent = marked(aiData);
+  // }
 
   return (
     <div
       className={`w-full bg-white/40 p-4 rounded-3xl transition-all ease-in
   ${open ? "ring-2 ring-offset-2 ring-primary" : ""}
   `}
-
     >
       <div
         className="w-full bg-white/60 h-16 rounded-xl flex flex-row items-center p-4 cursor-pointer hover:bg-white transition-all"
@@ -47,7 +80,8 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
             setOpen(false);
           } else {
             setOpen(true);
-            mutate();
+            handleGenerateSummary();
+            // mutate();
           }
         }}
       >
@@ -73,11 +107,37 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
         className="overflow-hidden"
       >
         <div>
-          {isPending && <div className="text-lg pt-4">Summarizing...</div>}
-          <article
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
             className="p-4 pb-4 pt-4 prose prose-strong:text-black prose-headings:text-black text-[18px] font-normal py-1 text-gray-900 prose-bold:text-white prose-bold:font-semibold prose-2xl:font-normal prose-2xl:text-lg prose-2xl:py-2 prose-2xl:leading-1.5"
-            dangerouslySetInnerHTML={{ __html: htmlContent! }}
-          />
+          >
+            {completion.split("\n").map((paragraph, index) => (
+              <motion.p
+                key={index}
+                variants={item}
+                dangerouslySetInnerHTML={{ __html: marked(paragraph)! }}
+              />
+            ))}
+          </motion.div>
+
+          {isLoading ? (
+            <div className="text-lg flex flex-row gap-2 p-2 bg-primary/10 rounded-full w-fit animate-pulse">
+              <LucideLoaderCircle
+                size={24}
+                className="text-primary animate-spin"
+              />
+              Summarizing...
+            </div>
+          ) : (
+            <>
+              <div className="text-lg flex flex-row gap-2 p-3 bg-primary/10 rounded-full w-fit">
+                <LucideCheckCircle size={24} className="text-primary" />
+                Summarization completed
+              </div>
+            </>
+          )}
         </div>
       </motion.div>
     </div>
@@ -85,3 +145,23 @@ const SummarizerComponent = ({ data, openState }: SummarizerProps) => {
 };
 
 export default SummarizerComponent;
+
+function useTypewriter(text: string, speed: number = 50) {
+  const [displayedText, setDisplayedText] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayedText((prev) => prev + text.charAt(i));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed]);
+
+  return displayedText;
+}

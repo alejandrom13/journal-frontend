@@ -161,9 +161,16 @@ const ChatUI = () => {
                   from: selected?.from!,
                   to: selected?.to!,
                 });
+                if(selected?.from && selected?.to === undefined) {
+                  setPreDateRange({
+                    from: selected?.from!,
+                    to: selected?.from!,
+                  });
+                }
               }}
-              min={2}
+              min={1}
               max={31}
+              required
               excludeDisabled
               month={displayedMonth}
               onMonthChange={(month) => setDisplayedMonth(month)}

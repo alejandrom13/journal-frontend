@@ -38,6 +38,7 @@ body {
   ); /* Change the accent color to indigo. */
   --rdp-accent-background-color: #f0f0f0; /* Change the accent background color. */
   /* Add more CSS variables here. */
+  --rdp-range_middle-background-color: #00000010;
 }
 .rdp-root button {
   font-size: 16px;
@@ -99,12 +100,10 @@ body {
 
   [data-theme="lavender_mist"] {
     --background-start: #f3e5f5; /* Lavender Blush */
-    --background-end: #e1bee7;   /* Soft Lilac */
+    --background-end: #e1bee7; /* Soft Lilac */
     --primary: 270 56% 58%; /* Lavender Purple */
     --primary-calendar: #ab47bc; /* Bright Orchid */
   }
-
-
 
   .rdp-chevron {
     fill: hsl(var(--primary)) !important;

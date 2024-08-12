@@ -35,7 +35,7 @@ const HomeTemplate = ({ children }: { children: React.ReactNode }) => {
     <>
       <QueryClientProvider client={queryClient}>
         {children}
-        <ReactQueryDevtools initialIsOpen={true} />
+        {/* <ReactQueryDevtools initialIsOpen={true} /> */}
       </QueryClientProvider>
     </>
   );

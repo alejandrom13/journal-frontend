@@ -1,5 +1,5 @@
 "use server";
-import { generateText, generateObject } from "ai";
+import { generateText, generateObject, streamText } from "ai";
 
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { z } from "zod";
@@ -11,7 +11,7 @@ const generateSummary = async (data: any) => {
     apiKey: process.env.GEMINI_API_KEY,
   });
 
-  const { text } = await generateText({
+  const { text } = await streamText({
     model: google("models/gemini-pro"),
     prompt: `
     Generate a well-structured summary of the day's activities using markdown format. Follow these guidelines:
