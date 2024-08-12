@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { defaultValue } from "./default-value";
 import HomeSkeletonLoader, { Skeleton } from "../home/skeleton";
 import TotalCard from "./totalCard";
-import { LucideAudioWaveform, LucideCalendar } from "lucide-react";
+import {
+  LucideAudioWaveform,
+  LucideCalendar,
+  LucideCheckCircle,
+  LucideLoaderCircle,
+} from "lucide-react";
 import { useDateStore } from "@/app/states/calendarState";
 import { getAllEntries, getAllEntriesByRange } from "@/actions/entries";
 import queryKey from "@/lib/queryKeys";
@@ -36,6 +41,9 @@ import {
   XAxis,
 } from "recharts";
 import { returnColor } from "@/lib/returnColor";
+import { formatData } from "@/lib/ai/formatData";
+import { useCompletion } from "ai/react";
+import { marked } from "marked";
 
 const chartConfig = {
   score: {
@@ -89,8 +97,24 @@ const InsightsPage = () => {
   });
 
   const [sentimentData, setSentimentData] = useState<any>(sentiment);
+  const {
+    completion,
+    complete,
+    isLoading: completionLoading,
+  } = useCompletion({
+    api: "api/insights",
+    body: {
+      data: data ? formatData(data) : "",
+      emotions: sentimentData?.map(
+        (item: SentimentType) => item.feeling + " , " + item.score
+      ),
+    },
+  });
 
   useEffect(() => {
+    const handleGenerateSummary = async () => {
+      await complete(formatData(data!));
+    };
     if (isSentimentSuccess) {
       //set sentiment data ordered by score descending
       setSentimentData(
@@ -98,8 +122,10 @@ const InsightsPage = () => {
           return b.score - a.score;
         })
       );
+
+      handleGenerateSummary();
     }
-  }, [isSentimentSuccess, sentiment, sentimentData]);
+  }, [complete, data, isSentimentSuccess, sentiment, sentimentData]);
 
   const [selectedType, setSelectedType] = useState("today");
 
@@ -348,6 +374,74 @@ const InsightsPage = () => {
           )}
         </div>
       </div>
+
+      <div className="pt-4">
+        <div className="p-4 w-full bg-white/50 rounded-3xl">
+          <div className="w-full p-3 flex flex-row bg-white rounded-2xl gap-2 items-center">
+            <Icon
+              icon="mingcute:sparkles-fill"
+              width="24"
+              height="24"
+              className="text-primary"
+            />
+            <h2 className="text-lg font-medium text-primary">
+              Resources & Recommendations
+            </h2>
+            <div className="ml-auto">
+              <TooltipProvider>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size={"icon"}
+                      className="rounded-full bg-transparent hover:bg-black/5 hover:text-primary text-black/50"
+                    >
+                      <Icon icon="uil:info-circle" width="20" height="20" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Sentiment analysis classifies your journal entries into
+                      <br />
+                      categories with scores from <strong>0</strong> (not
+                      present) to <strong>100 </strong>
+                      (strongly present).
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+
+          <div className="p-4">
+            <div
+              className="p-4 pb-4 pt-4 prose prose-strong:text-black prose-headings:text-black text-[18px] font-normal py-1 text-gray-900 prose-bold:text-white prose-bold:font-semibold prose-2xl:font-normal prose-2xl:text-lg prose-2xl:py-2 prose-2xl:leading-1.5 prose-a:target-blank"
+              dangerouslySetInnerHTML={{
+                __html: marked(completion!),
+              }}
+            ></div>
+
+            {isSentimentLoading || isLoading || completionLoading ? (
+              <div className="text-lg flex flex-row gap-2 p-2 bg-primary/10 rounded-full w-fit animate-pulse">
+                <LucideLoaderCircle
+                  size={24}
+                  className="text-primary animate-spin"
+                />
+                Generating Recommendations...
+              </div>
+            ) : (
+              <>
+                <div className="text-lg flex flex-row gap-2 p-3 bg-primary/10 rounded-full w-fit">
+                  <LucideCheckCircle size={24} className="text-primary" />
+                  Recommendations generated
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="h-10"></div>
     </div>
   );
 };
@@ -373,7 +467,5 @@ function returnIconSentiment(feeling: string) {
       "ph:smiley-neutral-fill";
   }
 }
-
-
 
 export default InsightsPage;
