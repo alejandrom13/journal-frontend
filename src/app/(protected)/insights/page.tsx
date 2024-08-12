@@ -401,11 +401,8 @@ const InsightsPage = () => {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>
-                      Sentiment analysis classifies your journal entries into
-                      <br />
-                      categories with scores from <strong>0</strong> (not
-                      present) to <strong>100 </strong>
-                      (strongly present).
+                      Recommendations are generated based on the sentiment
+                      analysis of your journal entries.
                     </p>
                   </TooltipContent>
                 </Tooltip>
