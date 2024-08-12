@@ -44,6 +44,7 @@ import { returnColor } from "@/lib/returnColor";
 import { formatData } from "@/lib/ai/formatData";
 import { useCompletion } from "ai/react";
 import { marked } from "marked";
+import ResourcesComponent from "@/components/ui/resources";
 
 const chartConfig = {
   score: {
@@ -129,6 +130,8 @@ const InsightsPage = () => {
 
   const [selectedType, setSelectedType] = useState("today");
 
+  const [recOpen, setRecOpen] = useState(false);
+
   return (
     <div className=" h-full">
       {isError && <div>error</div>}
@@ -158,6 +161,7 @@ const InsightsPage = () => {
                 variant="outline"
                 onClick={() => {
                   setSelectedType(type.id);
+                  setRecOpen(false);
                   const today = new Date();
                   let from = new Date();
                   let to = new Date();
@@ -375,7 +379,18 @@ const InsightsPage = () => {
         </div>
       </div>
 
-      <div className="pt-4">
+      {sentimentData && (
+        <div className="pt-4">
+          <ResourcesComponent
+            open={recOpen}
+            setOpen={setRecOpen}
+            data={data!}
+            sentimentData={sentimentData!}
+          />
+        </div>
+      )}
+
+      {/* <div className="pt-4">
         <div className="p-4 w-full bg-white/50 rounded-3xl">
           <div className="w-full p-3 flex flex-row bg-white rounded-2xl gap-2 items-center">
             <Icon
@@ -436,7 +451,7 @@ const InsightsPage = () => {
             )}
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="h-10"></div>
     </div>
